@@ -10,17 +10,17 @@
       ./hardware-configuration.nix
 
       # Modularized configuration.
-      ./modules/boot.nix
-      ./modules/networking.nix
-      ./modules/locale.nix
-      ./modules/desktop.nix
-      ./modules/hyprland.nix
-      ./modules/sound.nix
-      ./modules/users.nix
-      ./modules/shell.nix
-      ./modules/packages.nix
-      ./modules/git.nix
-      ./modules/nix-settings.nix
+      ../../modules/boot.nix
+      ../../modules/networking.nix
+      ../../modules/locale.nix
+      ../../modules/desktop.nix
+      ../../modules/hyprland.nix
+      ../../modules/sound.nix
+      ../../modules/users.nix
+      ../../modules/shell.nix
+      ../../modules/packages.nix
+      ../../modules/git.nix
+      ../../modules/nix-settings.nix
     ];
 
   # This value determines the NixOS release from which the default

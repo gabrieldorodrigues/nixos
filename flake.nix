@@ -20,7 +20,7 @@
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
-        ./configuration.nix
+        ./hosts/nixos/configuration.nix
 
         home-manager.nixosModules.home-manager
         {
@@ -28,7 +28,7 @@
           home-manager.useUserPackages = true;
           home-manager.backupFileExtension = "hm-bak";
           home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.users.gabrieldorodrigues = import ./home/default.nix;
+          home-manager.users.gabrieldorodrigues = import ./home/home.nix;
         }
       ];
     };

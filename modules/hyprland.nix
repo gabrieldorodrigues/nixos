@@ -7,7 +7,7 @@ let
   # Config files live in this repo (nix/dotfiles/...) and are symlinked into
   # the user's ~/.config at login. Editing the files here updates the system
   # after the next `nixos-rebuild switch` + relogin.
-  dotfiles = ../dotfiles;
+  dotfiles = ../home/dotfiles;
 
   # Folder (symlinked to ~/Pictures/wallpaper) that holds the wallpapers
   # versioned in this repo (nix/dotfiles/wallpaper).

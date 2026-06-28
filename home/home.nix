@@ -3,8 +3,13 @@
 
 {
   imports = [
-    ./waybar.nix
+    ./programs
   ];
+
+  home = {
+    username = "gabrieldorodrigues";
+    homeDirectory = "/home/gabrieldorodrigues";
+  };
 
   # Keep this in sync with the system stateVersion.
   home.stateVersion = "26.05";
