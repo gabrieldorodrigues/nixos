@@ -1,0 +1,113 @@
+/* Waybar style - Catppuccin Mocha
+   https://github.com/Alexays/Waybar/wiki/Styling */
+
+* {
+  font-family: "JetBrainsMono Nerd Font", "FiraCode Nerd Font", sans-serif;
+  font-size: 13px;
+  min-height: 0;
+}
+
+window#waybar {
+  background: transparent;
+  color: #cdd6f4;
+}
+
+/* Generic pill shape for module groups */
+.modules-left,
+.modules-center,
+.modules-right {
+  background-color: #1e1e2e;
+  border-radius: 12px;
+  padding: 0 6px;
+}
+
+#workspaces button {
+  padding: 0 8px;
+  margin: 4px 2px;
+  color: #6c7086;
+  background: transparent;
+  border-radius: 8px;
+}
+
+#workspaces button.active {
+  color: #1e1e2e;
+  background-color: #89b4fa;
+}
+
+#workspaces button.urgent {
+  color: #1e1e2e;
+  background-color: #f38ba8;
+}
+
+#workspaces button:hover {
+  color: #cdd6f4;
+  background-color: #313244;
+}
+
+#window {
+  color: #a6adc8;
+  padding: 0 10px;
+}
+
+#clock {
+  color: #cba6f7;
+  font-weight: bold;
+  padding: 0 12px;
+}
+
+#cpu,
+#memory,
+#backlight,
+#battery,
+#network,
+#pulseaudio,
+#tray {
+  padding: 0 10px;
+  margin: 4px 2px;
+}
+
+#cpu {
+  color: #a6e3a1;
+}
+#memory {
+  color: #f9e2af;
+}
+#backlight {
+  color: #f5c2e7;
+}
+#network {
+  color: #89dceb;
+}
+#pulseaudio {
+  color: #fab387;
+}
+
+#battery {
+  color: #a6e3a1;
+}
+#battery.warning {
+  color: #f9e2af;
+}
+#battery.critical {
+  color: #f38ba8;
+}
+#battery.charging {
+  color: #a6e3a1;
+}
+
+@keyframes blink {
+  to {
+    background-color: #f38ba8;
+    color: #1e1e2e;
+  }
+}
+
+#battery.critical:not(.charging) {
+  animation: blink 1s linear infinite alternate;
+  border-radius: 8px;
+}
+
+#tray menu {
+  background-color: #1e1e2e;
+  color: #cdd6f4;
+}

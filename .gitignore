@@ -1,0 +1,19 @@
+# Build artifacts / symlinks
+result
+result-*
+
+# Editor / OS cruft
+*.swp
+*~
+.DS_Store
+
+# Local backups
+*.bak
+*.hm-bak
+configuration.nix.save
+flake.nix.bak
+
+# Secrets (não versionar)
+*.key
+*.pem
+secrets/
