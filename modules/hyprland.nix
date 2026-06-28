@@ -4,13 +4,11 @@
 { config, pkgs, ... }:
 
 let
-  # Config files live in this repo (nix/dotfiles/...) and are symlinked into
-  # the user's ~/.config at login. Editing the files here updates the system
-  # after the next `nixos-rebuild switch` + relogin.
-  dotfiles = ../home/dotfiles;
+  # Versioned wallpapers folder, symlinked to ~/Pictures/wallpaper.
+  wallpapers = ../home/wallpapers;
 
   # Folder (symlinked to ~/Pictures/wallpaper) that holds the wallpapers
-  # versioned in this repo (nix/dotfiles/wallpaper).
+  # versioned in this repo (home/wallpapers).
   wallpaperDir = "$HOME/Pictures/wallpaper";
 
   # Default wallpaper applied at session start.
@@ -163,20 +161,9 @@ in
     tmux                # used by the Super+Alt+Return keybind
   ];
 
-  # Symlink the versioned dotfiles into the user's home at login.
-  # `L+` forces the symlink, replacing anything already there.
+  # App configs (hypr/rofi/gtk/waybar) are managed by Home Manager. Only the
+  # versioned wallpapers are symlinked into ~/Pictures/wallpaper here.
   systemd.user.tmpfiles.rules = [
-    # Hyprland 0.55+ uses a Lua config (hyprland.lua). Remove the stale
-    # hyprlang symlink so the compositor doesn't pick up the old file.
-    "r %h/.config/hypr/hyprland.conf  - - - - -"
-    "L+ %h/.config/hypr/hyprland.lua   - - - - ${dotfiles}/hypr/hyprland.lua"
-    "L+ %h/.config/hypr/hypridle.conf  - - - - ${dotfiles}/hypr/hypridle.conf"
-    "L+ %h/.config/hypr/hyprlock.conf  - - - - ${dotfiles}/hypr/hyprlock.conf"
-    "L+ %h/.config/rofi/config.rasi    - - - - ${dotfiles}/rofi/config.rasi"
-    # GTK dark theme (applies to both GTK3 and GTK4 apps).
-    "L+ %h/.config/gtk-3.0/settings.ini - - - - ${dotfiles}/gtk/settings.ini"
-    "L+ %h/.config/gtk-4.0/settings.ini - - - - ${dotfiles}/gtk/settings.ini"
-    # Versioned wallpapers, exposed under ~/Pictures/wallpaper.
-    "L+ %h/Pictures/wallpaper          - - - - ${dotfiles}/wallpaper"
+    "L+ %h/Pictures/wallpaper          - - - - ${wallpapers}"
   ];
 }
