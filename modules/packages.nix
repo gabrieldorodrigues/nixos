@@ -25,6 +25,7 @@ let
       fastfetch
       cmatrix
       htop
+      btop
 
       # GUIs
       kdePackages.kate
