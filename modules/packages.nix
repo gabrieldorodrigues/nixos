@@ -46,7 +46,7 @@ let
       zen-browser
       torlink
 
-      # Icon theme used by Rofi (config.rasi -> icon-theme "Papirus").
+      # Icon theme (used by Walker and file managers).
       papirus-icon-theme
     ]
     ++ lib.optionals (pkgs.stdenv.hostPlatform.system == "x86_64-linux") [
@@ -76,6 +76,13 @@ in
 
   # Define o Loupe como visualizador de imagens padrão.
   xdg.mime.defaultApplications = {
+    # Firefox como navegador padrão.
+    "text/html" = "firefox.desktop";
+    "application/xhtml+xml" = "firefox.desktop";
+    "x-scheme-handler/http" = "firefox.desktop";
+    "x-scheme-handler/https" = "firefox.desktop";
+    "x-scheme-handler/about" = "firefox.desktop";
+
     "image/png" = "org.gnome.Loupe.desktop";
     "image/jpeg" = "org.gnome.Loupe.desktop";
     "image/gif" = "org.gnome.Loupe.desktop";

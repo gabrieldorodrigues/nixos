@@ -21,10 +21,10 @@
       --------------------
       ---- MY PROGRAMS ---
       --------------------
-      local terminal    = "alacritty"
+      local terminal    = "kitty"
       local fileManager = "nautilus"
-      local menu        = "rofi -show drun"
-      local browser     = "zen"
+      local menu        = "walker"
+      local browser     = "firefox"
 
       -------------------
       ---- AUTOSTART ----
@@ -35,6 +35,9 @@
           hl.exec_cmd("mako")
           hl.exec_cmd("hypridle")
           hl.exec_cmd("nm-applet --indicator")
+          -- Walker launcher backend + service (started before it's ever invoked)
+          hl.exec_cmd("elephant")
+          hl.exec_cmd("walker --gapplication-service")
           hl.exec_cmd("wl-paste --type text  --watch cliphist store")
           hl.exec_cmd("wl-paste --type image --watch cliphist store")
           -- Apply the dark color-scheme so GTK/libadwaita apps render in dark mode.
@@ -152,7 +155,6 @@
       hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
       hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
       hl.bind(mainMod .. " + T", hl.dsp.window.float({ action = "toggle" }), { description = "Toggle tiling/floating" })
-      hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
       hl.bind(mainMod .. " + space", hl.dsp.exec_cmd(menu))
       hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
       hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
@@ -162,7 +164,7 @@
       -- Cycle through the wallpapers in ~/Pictures/wallpaper
       hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("wallpaper-cycle"), { description = "Next wallpaper" })
 
-      -- Pick a wallpaper from a rofi menu
+      -- Pick a wallpaper from a walker menu
       hl.bind(mainMod .. " + CTRL + space", hl.dsp.exec_cmd("wallpaper-menu"), { description = "Wallpaper picker" })
 
       -- Main use cases
@@ -172,7 +174,6 @@
       hl.bind(mainMod .. " + ALT + Return", hl.dsp.exec_cmd(terminal .. [[ -e bash -c "tmux attach || tmux new -s Work"]]), { description = "Tmux" })
 
       -- Application bindings
-      hl.bind(mainMod .. " + SHIFT + Return", hl.dsp.exec_cmd(browser), { description = "Browser" })
       hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd(fileManager), { description = "File manager" })
       hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd(browser), { description = "Browser" })
       hl.bind(mainMod .. " + SHIFT + ALT + B", hl.dsp.exec_cmd(browser .. " --private-window"), { description = "Browser (private)" })
@@ -183,8 +184,8 @@
       hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("obsidian"), { description = "Obsidian" })
       hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("readest"), { description = "Reader" })
 
-      -- Clipboard history (via rofi)
-      hl.bind(mainMod .. " + C", hl.dsp.exec_cmd([[cliphist list | rofi -dmenu | cliphist decode | wl-copy]]))
+      -- Clipboard history (via walker dmenu)
+      hl.bind(mainMod .. " + C", hl.dsp.exec_cmd([[cliphist list | walker --dmenu | cliphist decode | wl-copy]]))
 
       -- Cycle through windows with Alt + Tab
       hl.bind("ALT + Tab", function()
@@ -234,8 +235,8 @@
       hl.bind(mainMod .. " + SHIFT + Print", hl.dsp.exec_cmd([[mkdir -p ~/Pictures/Screenshots && f=~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png && grim -g "$(slurp)" "$f" && wl-copy < "$f" && notify-send "Screenshot" "Região salva em $f"]]))
       hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd("hyprpicker -a"), { description = "Color picker" })
 
-      -- Emoji / symbol picker
-      hl.bind(mainMod .. " + CTRL + E", hl.dsp.exec_cmd("rofimoji"))
+      -- Emoji / symbol picker (walker symbols provider)
+      hl.bind(mainMod .. " + CTRL + E", hl.dsp.exec_cmd("walker -m symbols"))
 
       -- Media & hardware keys (work even when locked)
       hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("pamixer -i 5"), { locked = true, repeating = true })

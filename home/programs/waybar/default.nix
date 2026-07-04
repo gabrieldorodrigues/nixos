@@ -9,7 +9,7 @@ let
 
   # Modules + commands for the dock layout.
   # Omarchy helper commands were replaced with the tools available on this host:
-  #   btop / nmtui / blueman-manager / pavucontrol / rofi / pamixer.
+  #   btop / nmtui / blueman-manager / pavucontrol / walker / pamixer.
   modulesConfig = ''
     "modules-left": ["custom/launcher", "custom/active_window"],
     "modules-center": [ "group/center3", "hyprland/workspaces", "group/center2" ],
@@ -53,24 +53,24 @@ let
     },
 
     "custom/launcher": {
-      "format": "<span size='11500'></span>",
-      "on-click": "rofi -show drun",
-      "on-click-right": "alacritty",
-      "tooltip-format": "Apps (Super+R)"
+      "format": "<span size='13000'>&#xf313;</span>",
+      "on-click": "walker",
+      "on-click-right": "kitty",
+      "tooltip-format": "NixOS — Apps (Super+Space)"
     },
 
     "cpu": {
       "interval": 2,
       "format": "{icon} ",
       "format-icons": ["󰪞", "󰪟", "󰪠", "󰪡", "󰪢", "󰪣", "󰪤", "󰪥"],
-      "on-click": "alacritty -e btop"
+      "on-click": "kitty -e btop"
     },
 
     "memory": {
       "interval": 2,
       "format": "{icon} ",
       "format-icons": ["󰪞", "󰪟", "󰪠", "󰪡", "󰪢", "󰪣", "󰪤", "󰪥"],
-      "on-click": "alacritty -e btop"
+      "on-click": "kitty -e btop"
     },
 
     "clock": {
@@ -90,7 +90,7 @@ let
       "tooltip-format-disconnected": "Disconnected",
       "interval": 3,
       "spacing": 1,
-      "on-click": "alacritty -e nmtui"
+      "on-click": "kitty -e nmtui"
     },
 
     "battery": {
@@ -243,14 +243,14 @@ let
 
     #custom-mode { margin-right: 4px; }
     #custom-launcher {
-      background: alpha(@foreground, 0.1);
-      border-radius: 99px;
+      color: @foreground;
+      background: transparent;
       margin-top: 4px;
       margin-bottom: 4px;
-      margin-left: -3px;
-      margin-right: 5px;
-      padding-right: 7px;
-      padding-left: 7px;
+      margin-left: 2px;
+      margin-right: 6px;
+      padding-right: 4px;
+      padding-left: 4px;
     }
     #cpu, #memory { font-size: 18px; padding: 2px 1px; }
 

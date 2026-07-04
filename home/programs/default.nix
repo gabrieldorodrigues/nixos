@@ -2,7 +2,8 @@
   imports = [
     ./gtk
     ./hypr
-    ./rofi
+    ./walker
     ./waybar
+    ./direnv.nix
   ];
 }

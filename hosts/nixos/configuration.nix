@@ -19,6 +19,7 @@
       ../../modules/users.nix
       ../../modules/shell.nix
       ../../modules/packages.nix
+      ../../modules/dev.nix
       ../../modules/git.nix
       ../../modules/nix-settings.nix
     ];

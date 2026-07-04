@@ -6,7 +6,7 @@
   users.users."gabrieldorodrigues" = {
     isNormalUser = true;
     description = "gabrieldorodrigues";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" ];
     shell = pkgs.fish;
   };
 }
