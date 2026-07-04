@@ -19,7 +19,6 @@
       enable_audio_bell = false;
       cursor_shape = "beam";
       scrollback_lines = 10000;
-      background_opacity = "0.95";
 
       # --- Catppuccin Mocha ---
       foreground = "#CDD6F4";

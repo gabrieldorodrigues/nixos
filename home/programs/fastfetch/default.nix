@@ -65,7 +65,6 @@ in
         "memory"
         "swap"
         "disk"
-        "localip"
         "break"
         "colors"
       ];
