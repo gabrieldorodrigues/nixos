@@ -114,7 +114,12 @@ in
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";        # Electron/Chromium apps run on Wayland.
     MOZ_ENABLE_WAYLAND = "1";    # Firefox/Zen on Wayland.
-    GTK_THEME = "Adwaita-dark";  # Force a dark GTK theme system-wide.
+    # NOTE: Do NOT set GTK_THEME=Adwaita-dark. "Adwaita-dark" only ships a
+    # gtk-3.0 stylesheet (no gtk-4.0), so forcing it on GTK4/libadwaita apps
+    # (Nautilus) loads broken CSS: misaligned sidebar without dividers and
+    # dialogs (Preferences) rendered inline instead of as a floating card.
+    # Dark mode for GTK4/libadwaita comes from color-scheme=prefer-dark
+    # (set via gsettings in the Hyprland autostart).
     TERMINAL = "kitty";          # Default terminal for apps that honour $TERMINAL.
     # NOTE: We deliberately do NOT pin HYPRLAND_CONFIG to a Nix store path.
     # Hyprland reads its default ~/.config/hypr/hyprland.lua (the symlink

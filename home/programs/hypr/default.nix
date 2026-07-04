@@ -41,8 +41,11 @@
           hl.exec_cmd("wl-paste --type text  --watch cliphist store")
           hl.exec_cmd("wl-paste --type image --watch cliphist store")
           -- Apply the dark color-scheme so GTK/libadwaita apps render in dark mode.
+          -- Use the real "Adwaita" theme (there is no GTK4 "Adwaita-dark"); dark
+          -- comes from color-scheme=prefer-dark. Naming Adwaita-dark breaks the
+          -- Nautilus sidebar/dialogs under GTK4/libadwaita.
           hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme prefer-dark")
-          hl.exec_cmd("gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark")
+          hl.exec_cmd("gsettings set org.gnome.desktop.interface gtk-theme Adwaita")
       end)
 
       -------------------------------
@@ -152,7 +155,6 @@
       -- Window management
       hl.bind(mainMod .. " + W", hl.dsp.window.close(), { description = "Close focused window" })
       hl.bind(mainMod .. " + Delete", hl.dsp.exit(), { description = "Log out of the Hyprland session" })
-      hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
       hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
       hl.bind(mainMod .. " + T", hl.dsp.window.float({ action = "toggle" }), { description = "Toggle tiling/floating" })
       hl.bind(mainMod .. " + space", hl.dsp.exec_cmd(menu))
@@ -174,7 +176,9 @@
       hl.bind(mainMod .. " + ALT + Return", hl.dsp.exec_cmd(terminal .. [[ -e bash -c "tmux attach || tmux new -s Work"]]), { description = "Tmux" })
 
       -- Application bindings
-      hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd(fileManager), { description = "File manager" })
+      -- Nautilus is single-instance: plain "nautilus" just raises the existing
+      -- window, so pass --new-window to always open a fresh one.
+      hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd(fileManager .. " --new-window"), { description = "File manager (new window)" })
       hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd(browser), { description = "Browser" })
       hl.bind(mainMod .. " + SHIFT + ALT + B", hl.dsp.exec_cmd(browser .. " --private-window"), { description = "Browser (private)" })
       hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("spotify"), { description = "Music" })
