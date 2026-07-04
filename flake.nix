@@ -13,6 +13,13 @@
       url = "github:youwen5/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # torlink (torlnk) — buscador de torrents no terminal.
+    # O pacote é feito no unstable; como o default aqui é 26.05, seguimos nixpkgs.
+    torlink = {
+      url = "github:baairon/torlink";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs: {

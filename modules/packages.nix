@@ -5,6 +5,9 @@ let
   # Zen browser (from flake input).
   zen-browser = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
+  # torlink (torlnk) — buscador de torrents no terminal (from flake input).
+  torlink = inputs.torlink.packages.${pkgs.stdenv.hostPlatform.system}.default;
+
   # Pacotes essenciais de CLI/sistema - não devem ser excluídos.
   systemPackages = with pkgs; [
     git
@@ -41,6 +44,7 @@ let
       readest
       foliate
       zen-browser
+      torlink
 
       # Icon theme used by Rofi (config.rasi -> icon-theme "Papirus").
       papirus-icon-theme
