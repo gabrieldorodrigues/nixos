@@ -5,5 +5,6 @@
     ./walker
     ./waybar
     ./direnv.nix
+    ./fastfetch
   ];
 }

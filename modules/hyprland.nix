@@ -127,6 +127,20 @@ in
   # dconf is needed so the gsettings "prefer-dark" color-scheme sticks.
   programs.dconf.enable = true;
 
+  # GNOME Files (Nautilus) plumbing. Under Plasma these are pulled in by KDE,
+  # but the Hyprland session has no desktop environment to enable them, so
+  # Nautilus was left without a virtual-filesystem backend or a search index.
+  #   - gvfs:        provides trash://, recent://, network://, smb://, mtp://…
+  #                  Without it there is no Trash (lixeira) and the Trash /
+  #                  Network / Other Locations sidebar tabs fail to load.
+  #   - tinysparql:  SPARQL metadata store used by the Recent / Starred / Search
+  #                  views (formerly services.gnome.tracker).
+  #   - localsearch: the file indexer that feeds tinysparql (formerly
+  #                  services.gnome.tracker-miners).
+  services.gvfs.enable = true;
+  services.gnome.tinysparql.enable = true;
+  services.gnome.localsearch.enable = true;
+
   # Packages for the Hyprland ecosystem (bar, launcher, utilities).
   environment.systemPackages = with pkgs; [
     walker              # application launcher / menus (Wayland/GTK4)

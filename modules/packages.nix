@@ -27,8 +27,8 @@ let
       lazydocker
       fastfetch
       cmatrix
-      htop
       btop
+      torlink
 
       # GUIs
       kdePackages.kate
@@ -44,7 +44,7 @@ let
       readest
       foliate
       zen-browser
-      torlink
+      discord
 
       # Icon theme (used by Walker and file managers).
       papirus-icon-theme
