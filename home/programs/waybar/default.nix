@@ -30,7 +30,7 @@ let
       "modules": [
         "pulseaudio",
         "bluetooth",
-        "network",
+        "tray",
         "battery"
       ]
     },
@@ -39,6 +39,13 @@ let
       "exec": "~/.config/waybar/window.sh",
       "return-type": "json",
       "markup": true
+    },
+
+    "tray": {
+      "icon-size": 16,
+      "spacing": 8,
+      "show-passive-items": true,
+      "reverse-direction": false
     },
 
     "hyprland/workspaces": {
@@ -74,23 +81,10 @@ let
     },
 
     "clock": {
-      "format": " {:%I:%M %p • %a, %d/%m}",
+      "interval": 1,
+      "format": " {:%H:%M:%S • %a, %d/%m}",
       "format-alt": "{:%A, %d %B %Y}",
       "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
-    },
-
-    "network": {
-      "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
-      "format": "{icon}",
-      "format-wifi": "{icon}",
-      "format-ethernet": "<span size='11500'>󰌘</span>",
-      "format-disconnected": "<span size='11500'>󰤮</span>",
-      "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
-      "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
-      "tooltip-format-disconnected": "Disconnected",
-      "interval": 3,
-      "spacing": 1,
-      "on-click": "kitty -e nmtui"
     },
 
     "battery": {
@@ -221,7 +215,6 @@ let
     #clock { font-size: 13px; font-weight: 700; padding: 0 14px; }
     #pulseaudio { margin: 0 7px; }
     #bluetooth { margin: 0 7px; }
-    #network { margin: 0 7px; }
     #battery { margin: 0 7px; }
     #custom-media { margin: 0 6px 0 0; }
     #custom-gamemode { margin-right: 8px; }
@@ -240,6 +233,13 @@ let
       font-size: 12px;
     }
     .hidden { opacity: 0; }
+
+    #tray {
+      margin: 0 7px;
+    }
+    #tray > .passive { -gtk-icon-effect: dim; }
+    #tray > .needs-attention { -gtk-icon-effect: highlight; }
+    #tray menu { background: @background; color: @foreground; }
 
     #custom-mode { margin-right: 4px; }
     #custom-launcher {
