@@ -32,7 +32,8 @@ let
 
       # GUIs
       kdePackages.kate
-      kitty
+      # kitty is provided by Home Manager (home/programs/kitty) so its config
+      # (font size, Catppuccin theme) is managed there.
       alacritty
       loupe
       deluge
