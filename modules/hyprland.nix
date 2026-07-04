@@ -68,13 +68,17 @@ let
       --transition-type fade --transition-fps 60 --transition-duration 1
   '';
 
-  # Show a walker menu listing the wallpapers in ${wallpaperDir} and apply the
-  # selected one. Bound to a key in hyprland.lua.
+  # Open the walker wallpaper picker: a thumbnail-only menu of the images in
+  # ${wallpaperDir}. The menu (entries + cached PNG thumbnails) is defined in
+  # ~/.config/elephant/menus/wallpapers.lua (see home/programs/walker) and
+  # applies the chosen wallpaper via awww. We activate walker directly on the
+  # menus:wallpapers provider so it works even on the first use after login
+  # (walker only subscribes to elephant's menu channel once it's activated).
   wallpaperMenu = pkgs.writeShellScriptBin "wallpaper-menu" ''
-    export PATH=${pkgs.awww}/bin:${pkgs.walker}/bin:${pkgs.coreutils}/bin:${pkgs.findutils}/bin:$PATH
-    dir="${wallpaperDir}"
+    export PATH=${pkgs.awww}/bin:${pkgs.walker}/bin:${pkgs.coreutils}/bin:$PATH
 
-    # Make sure the daemon is up (e.g. first run after login).
+    # Make sure the daemon is up (e.g. first run after login) so applying the
+    # selected wallpaper works immediately.
     if ! awww query >/dev/null 2>&1; then
       awww-daemon &
       for _ in $(seq 1 50); do
@@ -83,23 +87,10 @@ let
       done
     fi
 
-    # Collect supported image files, sorted for a stable order.
-    mapfile -t walls < <(find -L "$dir" -maxdepth 1 -type f \
-      \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \
-         -o -iname '*.webp' -o -iname '*.gif' \) | sort)
-    [ "''${#walls[@]}" -eq 0 ] && exit 0
-
-    # Build a newline-separated list of wallpaper file names for walker --dmenu.
-    menu=""
-    for w in "''${walls[@]}"; do
-      menu+="$(basename "$w")"$'\n'
-    done
-
-    choice=$(printf '%b' "$menu" | walker --dmenu -p "Wallpaper")
-    [ -z "$choice" ] && exit 0
-
-    awww img "$dir/$choice" \
-      --transition-type fade --transition-fps 60 --transition-duration 1
+    # Grid picker: --hideqa hides the quick-activation number hints; the
+    # --maxwidth/--maxheight widen this launch only (not the main launcher) so
+    # the three landscape thumbnails per row are large.
+    exec walker --provider menus:wallpapers --hideqa --maxwidth 900 --maxheight 700
   '';
 in
 {

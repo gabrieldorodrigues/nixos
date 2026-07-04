@@ -155,11 +155,13 @@
       -- Window management
       hl.bind(mainMod .. " + W", hl.dsp.window.close(), { description = "Close focused window" })
       hl.bind(mainMod .. " + Delete", hl.dsp.exit(), { description = "Log out of the Hyprland session" })
-      hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
       hl.bind(mainMod .. " + T", hl.dsp.window.float({ action = "toggle" }), { description = "Toggle tiling/floating" })
-      hl.bind(mainMod .. " + space", hl.dsp.exec_cmd(menu))
+      -- Walker runs as a single persistent service, so the wallpaper picker's
+      -- larger window size (it launches with --maxheight/--maxwidth) would carry
+      -- over to this launcher. Re-assert the default size here so the app
+      -- launcher always opens compact.
+      hl.bind(mainMod .. " + space", hl.dsp.exec_cmd(menu .. " --maxheight 400 --maxwidth 500"))
       hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
-      hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
       hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }))
       hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
 
@@ -173,7 +175,6 @@
       hl.bind(mainMod .. " + Q", hl.dsp.focus({ workspace = "previous" }), { description = "Previous workspace" })
       hl.bind(mainMod .. " + Tab", hl.dsp.focus({ workspace = "e+1" }), { description = "Next workspace" })
       hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal), { description = "Terminal" })
-      hl.bind(mainMod .. " + ALT + Return", hl.dsp.exec_cmd(terminal .. [[ -e bash -c "tmux attach || tmux new -s Work"]]), { description = "Tmux" })
 
       -- Application bindings
       -- Nautilus is single-instance: plain "nautilus" just raises the existing

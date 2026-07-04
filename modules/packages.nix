@@ -42,10 +42,14 @@ let
       onlyoffice-desktopeditors
       inkscape
       vlc
-      readest
+      upscayl
       foliate
       zen-browser
       discord
+      tailscale
+      audacity
+      mangayomi
+      bitwarden-desktop
 
       # Icon theme (used by Walker and file managers).
       papirus-icon-theme
@@ -71,6 +75,10 @@ in
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # Obsidian ships Electron 39, which nixpkgs marks insecure past its EOL date.
+  # Allow it explicitly so rebuilds succeed.
+  nixpkgs.config.permittedInsecurePackages = [ "electron-39.8.10" ];
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = systemPackages ++ filteredDiscretionaryPackages;
@@ -94,6 +102,14 @@ in
     "image/x-icon" = "org.gnome.Loupe.desktop";
     "image/heif" = "org.gnome.Loupe.desktop";
     "image/avif" = "org.gnome.Loupe.desktop";
+
+    # Foliate como leitor de e-books padrão.
+    "application/epub+zip" = "com.github.johnfactotum.Foliate.desktop";
+    "application/x-mobipocket-ebook" = "com.github.johnfactotum.Foliate.desktop";
+    "application/vnd.amazon.mobi8-ebook" = "com.github.johnfactotum.Foliate.desktop";
+    "application/x-fictionbook+xml" = "com.github.johnfactotum.Foliate.desktop";
+    "application/x-zip-compressed-fb2" = "com.github.johnfactotum.Foliate.desktop";
+    "application/vnd.comicbook+zip" = "com.github.johnfactotum.Foliate.desktop";
   };
 
   # Nerd Font para renderizar os ícones do Starship corretamente.
