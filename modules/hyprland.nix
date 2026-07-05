@@ -4,11 +4,14 @@
 { config, pkgs, ... }:
 
 let
-  # Versioned wallpapers folder, symlinked to ~/Pictures/wallpaper.
-  wallpapers = ../home/wallpapers;
+  # Real, editable location of the wallpapers, versioned in this repo. We point
+  # the ~/Pictures/wallpaper symlink (below) at THIS path instead of a copy in
+  # the read-only nix store, so wallpapers can be added / removed / edited in
+  # place (the folder is user-owned; /etc/nixos is the deploy path) and show up
+  # live in the picker with no rebuild.
+  wallpaperSource = "/etc/nixos/home/wallpapers";
 
-  # Folder (symlinked to ~/Pictures/wallpaper) that holds the wallpapers
-  # versioned in this repo (home/wallpapers).
+  # Runtime path apps read wallpapers from (the symlink created below).
   wallpaperDir = "$HOME/Pictures/wallpaper";
 
   # Default wallpaper applied at session start.
@@ -53,8 +56,8 @@ let
     [ "''${#walls[@]}" -eq 0 ] && exit 0
 
     # Find the wallpaper currently displayed (if any) to compute the next one.
-    # awww reports the canonical (nix store) path because ~/Pictures/wallpaper
-    # is a symlink, so canonicalize each candidate before comparing.
+    # awww reports the canonical (symlink-resolved) path because
+    # ~/Pictures/wallpaper is a symlink, so canonicalize each candidate first.
     current=$(awww query 2>/dev/null | sed -n 's/.*image: //p' | head -n1)
     next=0
     for i in "''${!walls[@]}"; do
@@ -213,9 +216,11 @@ in
     tmux                # used by the Super+Alt+Return keybind
   ];
 
-  # App configs (hypr/walker/gtk/waybar) are managed by Home Manager. Only the
-  # versioned wallpapers are symlinked into ~/Pictures/wallpaper here.
+  # App configs (hypr/walker/gtk/waybar) are managed by Home Manager. The
+  # wallpapers are exposed at ~/Pictures/wallpaper via a symlink to the real
+  # (editable, versioned) repo folder, so new wallpapers can be dropped in with
+  # no rebuild. `L+` replaces any pre-existing target on activation.
   systemd.user.tmpfiles.rules = [
-    "L+ %h/Pictures/wallpaper          - - - - ${wallpapers}"
+    "L+ %h/Pictures/wallpaper          - - - - ${wallpaperSource}"
   ];
 }
