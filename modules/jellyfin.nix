@@ -206,6 +206,52 @@ let
       <SplashscreenEnabled>true</SplashscreenEnabled>
     </BrandingOptions>
   '';
+
+  # ------------------------------------------------------------------
+  # Live TV (IPTV) declarativo: um tuner M3U (lista pública iptv-org com
+  # canais abertos brasileiros) + um guia XMLTV (EPG) do epgshare01 (BR1).
+  # Schema = LiveTvOptions do Jellyfin; a ordem dos campos segue a ordem das
+  # propriedades das classes (o XmlSerializer do .NET é sensível a ordem).
+  # O EnableAllTuners=true faz o EPG casar com qualquer canal cujo id bata.
+  # ------------------------------------------------------------------
+  m3uUrl = "https://iptv-org.github.io/iptv/countries/br.m3u";
+  epgUrl = "https://epgshare01.online/epgshare01/epg_ripper_BR1.xml.gz";
+  liveTvXml = pkgs.writeText "livetv.xml" ''
+    <?xml version="1.0" encoding="utf-8"?>
+    <LiveTvOptions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <GuideDays>3</GuideDays>
+      <EnableRecordingSubfolders>false</EnableRecordingSubfolders>
+      <EnableOriginalAudioWithEncodedRecordings>false</EnableOriginalAudioWithEncodedRecordings>
+      <TunerHosts>
+        <TunerHostInfo>
+          <Id>a1b2c3d4e5f647a819b2c3d4e5f6a701</Id>
+          <Url>${m3uUrl}</Url>
+          <Type>m3u</Type>
+          <FriendlyName>IPTV-Org Brasil</FriendlyName>
+          <ImportFavoritesOnly>false</ImportFavoritesOnly>
+          <AllowHWTranscoding>true</AllowHWTranscoding>
+          <AllowFmp4TranscodingContainer>false</AllowFmp4TranscodingContainer>
+          <AllowStreamSharing>true</AllowStreamSharing>
+          <FallbackMaxStreamingBitrate>30000000</FallbackMaxStreamingBitrate>
+          <EnableStreamLooping>false</EnableStreamLooping>
+          <TunerCount>0</TunerCount>
+          <IgnoreDts>true</IgnoreDts>
+          <ReadAtNativeFramerate>false</ReadAtNativeFramerate>
+        </TunerHostInfo>
+      </TunerHosts>
+      <ListingProviders>
+        <ListingsProviderInfo>
+          <Id>b2c3d4e5f6a147a819b2c3d4e5f6a702</Id>
+          <Type>xmltv</Type>
+          <Country>BR</Country>
+          <Path>${epgUrl}</Path>
+          <EnableAllTuners>true</EnableAllTuners>
+        </ListingsProviderInfo>
+      </ListingProviders>
+      <PrePaddingSeconds>0</PrePaddingSeconds>
+      <PostPaddingSeconds>0</PostPaddingSeconds>
+    </LiveTvOptions>
+  '';
 in
 {
   # ------------------------------------------------------------------
@@ -277,6 +323,14 @@ in
       if [ ! -f "$branding" ]; then
         cp ${brandingXml} "$branding"
         chmod 0644 "$branding"
+      fi
+
+      # Live TV (IPTV): semeia o tuner M3U + guia XMLTV só em instalação nova,
+      # sem sobrescrever ajustes feitos pelo usuário na interface depois.
+      livetv="${configDir}/config/livetv.xml"
+      if [ ! -f "$livetv" ]; then
+        cp ${liveTvXml} "$livetv"
+        chmod 0644 "$livetv"
       fi
     '';
   };
