@@ -56,7 +56,8 @@ Modificador principal (`mainMod`): **Super** (tecla Windows).
 | `Super + Shift + B`       | Navegador (firefox)                             |
 | `Super + Shift + Alt + B` | Navegador em janela privada                     |
 | `Super + Shift + M`       | Música (spotify)                                |
-| `Super + Shift + N`       | Editor (VS Code)                                |
+| `Super + Shift + N`       | Bitwarden                                       |
+| `Super + Shift + I`       | opencode (kitty + IA)                           |
 | `Super + Shift + D`       | Docker (kitty + lazydocker)                     |
 | `Super + Shift + T`       | Torrents (kitty + torlnk)                       |
 | `Super + Shift + O`       | Obsidian                                        |
