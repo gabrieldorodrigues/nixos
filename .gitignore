@@ -17,3 +17,7 @@ flake.nix.bak
 *.key
 *.pem
 secrets/
+
+# Listas IPTV (geradas localmente, não versionar)
+*.m3u
+*.m3u8

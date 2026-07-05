@@ -208,11 +208,14 @@ let
   '';
 
   # ------------------------------------------------------------------
-  # Live TV (IPTV) declarativo: um tuner M3U (lista pública iptv-org com
-  # canais abertos brasileiros) + um guia XMLTV (EPG) do epgshare01 (BR1).
-  # Schema = LiveTvOptions do Jellyfin; a ordem dos campos segue a ordem das
-  # propriedades das classes (o XmlSerializer do .NET é sensível a ordem).
-  # O EnableAllTuners=true faz o EPG casar com qualquer canal cujo id bata.
+  # Live TV (IPTV) declarativo: um tuner M3U apontando direto para a lista
+  # pública do iptv-org (canais abertos brasileiros) + um guia XMLTV (EPG)
+  # do epgshare01 (BR1). A lista NÃO é versionada neste repo — o Jellyfin a
+  # baixa da URL ao atualizar o guia. Schema = LiveTvOptions do Jellyfin; a
+  # ordem dos campos segue a ordem das propriedades das classes (o
+  # XmlSerializer do .NET é sensível a ordem). EnableAllTuners=true faz o EPG
+  # casar com qualquer canal cujo id bata. (~30% dos canais de listas
+  # públicas ficam offline de tempos em tempos — é esperado.)
   # ------------------------------------------------------------------
   m3uUrl = "https://iptv-org.github.io/iptv/countries/br.m3u";
   epgUrl = "https://epgshare01.online/epgshare01/epg_ripper_BR1.xml.gz";
@@ -227,7 +230,7 @@ let
           <Id>a1b2c3d4e5f647a819b2c3d4e5f6a701</Id>
           <Url>${m3uUrl}</Url>
           <Type>m3u</Type>
-          <FriendlyName>IPTV-Org Brasil</FriendlyName>
+          <FriendlyName>IPTV Brasil</FriendlyName>
           <ImportFavoritesOnly>false</ImportFavoritesOnly>
           <AllowHWTranscoding>true</AllowHWTranscoding>
           <AllowFmp4TranscodingContainer>false</AllowFmp4TranscodingContainer>
@@ -325,13 +328,20 @@ in
         chmod 0644 "$branding"
       fi
 
-      # Live TV (IPTV): semeia o tuner M3U + guia XMLTV só em instalação nova,
+      # Semeia o livetv.xml (tuner M3U + guia XMLTV) só em instalação nova,
       # sem sobrescrever ajustes feitos pelo usuário na interface depois.
       livetv="${configDir}/config/livetv.xml"
       if [ ! -f "$livetv" ]; then
         cp ${liveTvXml} "$livetv"
         chmod 0644 "$livetv"
+      else
+        # Já existe: garante que o tuner aponte para a URL declarada
+        # (troca qualquer <Url> do tuner pela lista pública atual).
+        sed -i 's#<Url>[^<]*</Url>#<Url>${m3uUrl}</Url>#' "$livetv"
       fi
+
+      # Remove a lista local antiga (não é mais versionada/usada).
+      rm -f "${configDir}/config/iptv-br.m3u"
     '';
   };
 }
