@@ -46,11 +46,27 @@
           -- Nautilus sidebar/dialogs under GTK4/libadwaita.
           hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme prefer-dark")
           hl.exec_cmd("gsettings set org.gnome.desktop.interface gtk-theme Adwaita")
+          -- Pin the UI fonts to the GNOME defaults. A leftover config had bumped
+          -- these to "Source Sans Pro 13" / "Maple Mono NF 13", which enlarged the
+          -- GTK chrome of apps like Firefox (bigger toolbar/buttons; web content
+          -- unaffected). Neither font is installed here, so the size-13 just
+          -- applied to fallback fonts.
+          hl.exec_cmd("gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'")
+          hl.exec_cmd("gsettings set org.gnome.desktop.interface document-font-name 'Adwaita Sans 12'")
+          hl.exec_cmd("gsettings set org.gnome.desktop.interface monospace-font-name 'Adwaita Mono 11'")
+          -- Pin the cursor to Adwaita/24 for GTK4/libadwaita apps (they read
+          -- gsettings, which had a leftover 'BreezeX-RosePine-Linux' size 20 from
+          -- the other config's home.pointerCursor). Matches gtk settings.ini.
+          hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-theme Adwaita")
+          hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-size 24")
       end)
 
       -------------------------------
       ---- ENVIRONMENT VARIABLES ----
       -------------------------------
+      -- Set the cursor theme explicitly so Hyprland doesn't fall back to a stale
+      -- gsettings value (an old config left 'BreezeX-RosePine-Linux' in dconf).
+      hl.env("XCURSOR_THEME", "Adwaita")
       hl.env("XCURSOR_SIZE", "24")
       hl.env("HYPRCURSOR_SIZE", "24")
 
