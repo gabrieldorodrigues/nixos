@@ -54,19 +54,19 @@
           hl.exec_cmd("gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'")
           hl.exec_cmd("gsettings set org.gnome.desktop.interface document-font-name 'Adwaita Sans 12'")
           hl.exec_cmd("gsettings set org.gnome.desktop.interface monospace-font-name 'Adwaita Mono 11'")
-          -- Pin the cursor to Adwaita/24 for GTK4/libadwaita apps (they read
-          -- gsettings, which had a leftover 'BreezeX-RosePine-Linux' size 20 from
-          -- the other config's home.pointerCursor). Matches gtk settings.ini.
-          hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-theme Adwaita")
+          -- Pin the cursor to Rose Pine (BreezeX-RosePine-Linux) size 24 for
+          -- GTK4/libadwaita apps (they read gsettings). Matches gtk settings.ini
+          -- and the XCURSOR_THEME below; package comes from home/programs/gtk.
+          hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-theme BreezeX-RosePine-Linux")
           hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-size 24")
       end)
 
       -------------------------------
       ---- ENVIRONMENT VARIABLES ----
       -------------------------------
-      -- Set the cursor theme explicitly so Hyprland doesn't fall back to a stale
-      -- gsettings value (an old config left 'BreezeX-RosePine-Linux' in dconf).
-      hl.env("XCURSOR_THEME", "Adwaita")
+      -- Set the cursor theme explicitly so Hyprland uses Rose Pine consistently
+      -- (and doesn't fall back to whatever is left in the gsettings/dconf value).
+      hl.env("XCURSOR_THEME", "BreezeX-RosePine-Linux")
       hl.env("XCURSOR_SIZE", "24")
       hl.env("HYPRCURSOR_SIZE", "24")
 
