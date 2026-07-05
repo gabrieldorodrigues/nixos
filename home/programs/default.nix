@@ -2,6 +2,7 @@
   imports = [
     ./gtk
     ./hypr
+    ./btop
     ./kitty
     ./walker
     ./waybar

@@ -185,6 +185,7 @@
       hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("spotify"), { description = "Music" })
       hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("code"), { description = "Editor" })
       hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd(terminal .. " -e lazydocker"), { description = "Docker" })
+      hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd(terminal .. " -e btop"), { description = "System monitor (btop)" })
       hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd(terminal .. " -e torlnk"), { description = "Torlink (torrents)" })
       hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("obsidian"), { description = "Obsidian" })
       hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("readest"), { description = "Reader" })
