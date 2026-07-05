@@ -26,11 +26,13 @@ let
     , url
     , sha256
     , targetAbi ? "10.11.11.0"
+    , category ? "General"
+    , imagePath ? "logo.png" # alguns releases não trazem logo
     }:
     let
       src = pkgs.fetchurl { inherit url sha256; };
       meta = builtins.toJSON {
-        category = "General";
+        category = category;
         changelog = "";
         description = displayName;
         guid = guid;
@@ -42,7 +44,7 @@ let
         version = version;
         status = "Active";
         autoUpdate = false;
-        imagePath = "logo.png";
+        imagePath = imagePath;
         assemblies = [ ];
       };
     in
@@ -74,6 +76,21 @@ let
     owner = "IAmParadox27";
     url = "https://github.com/IAmParadox27/jellyfin-plugin-media-bar/releases/download/2.4.12.0/Release-10.11.11.zip";
     sha256 = "1q79gz2wf773jdp5rmxf3qvxw0vqdrbgz593ccq4raqxxvpc3740";
+  };
+
+  # Metadados de anime de múltiplas fontes (AniList, AniDB, MAL, TVDB, etc.).
+  # targetAbi 10.11.3.0 → compatível com 10.11.11 (server >= abi mínimo).
+  animeMultiSource = mkPlugin {
+    pname = "anime-multi-source";
+    version = "1.0.4.9";
+    guid = "8eca6f17-71fe-4309-a670-3cae083f22bd";
+    displayName = "Anime Multi Source";
+    owner = "webbster64";
+    category = "Anime";
+    targetAbi = "10.11.3.0";
+    imagePath = ""; # este release não inclui logo.png
+    url = "https://github.com/webbster64/jellyfin-plugin-AnimeMultiSource/releases/download/v1.0.4.9/AnimeMultiSource_v1.0.4.9.zip";
+    sha256 = "0kxds1cav7akqsb5k5zq4pq925ibmyjkzgxh31rj69ad30ychrmd";
   };
 
   # ElegantFin é um tema puramente CSS: entra via "Custom CSS" (branding.xml).
@@ -141,6 +158,7 @@ in
       }
       sync_plugin "FileTransformation" "${fileTransformation}"
       sync_plugin "MediaBar" "${mediaBar}"
+      sync_plugin "AnimeMultiSource" "${animeMultiSource}"
 
       # ElegantFin (tema CSS): semeia só em instalação nova, sem sobrescrever
       # um branding.xml já existente/editado pelo usuário na interface.
