@@ -43,12 +43,17 @@ in
 
       # Utilitários.
       bitwarden-desktop
-      qdirstat
       localsend
       deluge
       proton-vpn
 
       # Tema de ícones (usado pelo Walker e gerenciadores de arquivos).
-      papirus-icon-theme
+      # Papirus com as pastas recoloridas para o accent do Catppuccin Mocha
+      # (mauve), pra combinar com o resto do rice. Fornece o tema "Papirus-Dark"
+      # completo, então o icon-theme continua sendo "Papirus-Dark".
+      (catppuccin-papirus-folders.override {
+        flavor = "mocha";
+        accent = "mauve";
+      })
     ];
 }
