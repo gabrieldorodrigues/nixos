@@ -1,9 +1,9 @@
-# Keybinds — Hyprland
+# Keybinds do Hyprland
 
 Atalhos definidos em [`home/programs/hypr/default.nix`](../home/programs/hypr/default.nix).
 Modificador principal (`mainMod`): **Super** (tecla Windows).
 
-**Apps padrão:** terminal = `kitty` · gerenciador de arquivos = `nautilus` · menu = `walker` · navegador = `firefox`
+**Apps padrão:** terminal = `kitty`, gerenciador de arquivos = `nautilus`, menu = `walker`, navegador = `firefox`
 
 ---
 
@@ -38,8 +38,8 @@ Modificador principal (`mainMod`): **Super** (tecla Windows).
 
 | Atalho                       | Ação                                    |
 | ---------------------------- | --------------------------------------- |
-| `Super + 1`…`9`, `0`         | Ir para workspace 1–10                  |
-| `Super + Shift + 1`…`9`, `0` | Mover janela para workspace 1–10        |
+| `Super + 1`…`9`, `0`         | Ir para workspace 1 a 10                |
+| `Super + Shift + 1`…`9`, `0` | Mover janela para workspace 1 a 10      |
 | `Super + Tab`                | Próximo workspace                       |
 | `Super + Q`                  | Workspace anterior                      |
 | `Super + S`                  | Mostrar scratchpad (workspace especial) |
@@ -48,19 +48,19 @@ Modificador principal (`mainMod`): **Super** (tecla Windows).
 
 ## Aplicativos
 
-| Atalho                    | Ação                                             |
-| ------------------------- | ------------------------------------------------ |
-| `Super + Space`           | Lançador de apps (walker)                        |
-| `Super + Return`          | Terminal (kitty)                                 |
-| `Super + Shift + F`       | Gerenciador de arquivos — nova janela (nautilus) |
-| `Super + Shift + B`       | Navegador (firefox)                              |
-| `Super + Shift + Alt + B` | Navegador — janela privada                       |
-| `Super + Shift + M`       | Música (spotify)                                 |
-| `Super + Shift + N`       | Editor (VS Code)                                 |
-| `Super + Shift + D`       | Docker (kitty + lazydocker)                      |
-| `Super + Shift + T`       | Torrents (kitty + torlnk)                        |
-| `Super + Shift + O`       | Obsidian                                         |
-| `Super + Shift + P`       | Leitor (readest)                                 |
+| Atalho                    | Ação                                            |
+| ------------------------- | ----------------------------------------------- |
+| `Super + Space`           | Lançador de apps (walker)                       |
+| `Super + Return`          | Terminal (kitty)                                |
+| `Super + Shift + F`       | Gerenciador de arquivos, nova janela (nautilus) |
+| `Super + Shift + B`       | Navegador (firefox)                             |
+| `Super + Shift + Alt + B` | Navegador em janela privada                     |
+| `Super + Shift + M`       | Música (spotify)                                |
+| `Super + Shift + N`       | Editor (VS Code)                                |
+| `Super + Shift + D`       | Docker (kitty + lazydocker)                     |
+| `Super + Shift + T`       | Torrents (kitty + torlnk)                       |
+| `Super + Shift + O`       | Obsidian                                        |
+| `Super + Shift + P`       | Leitor (readest)                                |
 
 ## Clipboard e símbolos
 
