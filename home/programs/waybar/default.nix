@@ -162,6 +162,11 @@ let
       min-height: 0;
       font-family: 'JetBrainsMono Nerd Font';
       font-size: 12px;
+      /* Pin the text/glyph color so modules never inherit it from the ambient
+         GTK theme. Without this, waybar reads the dconf gtk-theme at startup and
+         a stray theme (e.g. a leftover adw-gtk3) renders clock/media/icons in a
+         dark, near-invisible color. More specific selectors still override this. */
+      color: @foreground;
     }
 
     .modules-left { margin-left: 8px; }
@@ -197,8 +202,8 @@ let
     #workspaces button.active {
       transition: all 50ms ease-out;
       border-radius: 18px;
-      color: @background;
-      background: alpha(@foreground, 0.9);
+      color: #11111b;
+      background: transparent;
       opacity: 1;
       margin-top: 4px;
       margin-bottom: 4px;
