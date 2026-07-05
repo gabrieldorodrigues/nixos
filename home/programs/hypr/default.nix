@@ -154,7 +154,12 @@
 
       -- Window management
       hl.bind(mainMod .. " + W", hl.dsp.window.close(), { description = "Close focused window" })
-      hl.bind(mainMod .. " + Delete", hl.dsp.exit(), { description = "Log out of the Hyprland session" })
+      -- Log out. hl.dsp.exit() only tells the compositor to quit; without a
+      -- session manager (UWSM) that does NOT reliably drop back to the SDDM
+      -- greeter. Terminating the systemd login session directly does, and is
+      -- independent of Hyprland's exit path. $XDG_SESSION_ID is inherited from
+      -- the session Hyprland was started in; the command runs via /bin/sh.
+      hl.bind(mainMod .. " + Delete", hl.dsp.exec_cmd("loginctl terminate-session $XDG_SESSION_ID"), { description = "Log out of the Hyprland session" })
       hl.bind(mainMod .. " + T", hl.dsp.window.float({ action = "toggle" }), { description = "Toggle tiling/floating" })
       -- Walker runs as a single persistent service, so the wallpaper picker's
       -- larger window size (it launches with --maxheight/--maxwidth) would carry

@@ -182,6 +182,14 @@ in
   services.gnome.tinysparql.enable = true;
   services.gnome.localsearch.enable = true;
 
+  # GNOME Online Accounts (GOA). Enables the goa-daemon + D-Bus service that
+  # stores cloud credentials (Google, Nextcloud, Microsoft…). Combined with the
+  # GOA-enabled gvfs above, adding a Google account here makes the Drive show up
+  # in Nautilus as a mountable location (google-drive://). The accounts are
+  # added / removed through the gnome-online-accounts-gtk GUI below (Plasma's
+  # System Settings would provide this, but the Hyprland session has none).
+  services.gnome.gnome-online-accounts.enable = true;
+
   # Packages for the Hyprland ecosystem (bar, launcher, utilities).
   environment.systemPackages = with pkgs; [
     walker              # application launcher / menus (Wayland/GTK4)
@@ -213,6 +221,7 @@ in
     glib                # gsettings CLI (used to set the dark color-scheme)
     xdg-utils           # xdg-open and friends
     nautilus            # file manager
+    gnome-online-accounts-gtk # GUI to add cloud accounts (Google Drive → Nautilus)
     tmux                # used by the Super+Alt+Return keybind
   ];
 
