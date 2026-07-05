@@ -190,6 +190,16 @@ in
   # System Settings would provide this, but the Hyprland session has none).
   services.gnome.gnome-online-accounts.enable = true;
 
+  # Secret Service (chaveiro). A sessão Hyprland não tem um ambiente de desktop
+  # para fornecer o daemon org.freedesktop.secrets, então apps que guardam
+  # credenciais nele falhavam com "The Secret Service daemon is neither running
+  # nor activatable through D-Bus" (ex.: ProtonVPN, que nem inicializa o login
+  # sem chaveiro). O gnome-keyring instala esse serviço D-Bus (ativável sob
+  # demanda) e o PAM abaixo o destrava no login do SDDM usando a senha da conta,
+  # evitando prompts (o Hyprland não tem um prompter gráfico por padrão).
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.sddm.enableGnomeKeyring = true;
+
   # Packages for the Hyprland ecosystem (bar, launcher, utilities).
   environment.systemPackages = with pkgs; [
     walker              # application launcher / menus (Wayland/GTK4)
