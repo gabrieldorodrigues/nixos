@@ -28,6 +28,7 @@ let
     , targetAbi ? "10.11.11.0"
     , category ? "General"
     , imagePath ? "logo.png" # alguns releases não trazem logo
+    , flatten ? false # true: move DLLs de subpastas (bin/Debug/...) p/ a raiz
     }:
     let
       src = pkgs.fetchurl { inherit url sha256; };
@@ -53,6 +54,15 @@ let
       ''
         mkdir -p "$out"
         unzip -o ${src} -d "$out"
+        ${lib.optionalString flatten ''
+          # Alguns releases empacotam a DLL em subpastas (ex.: bin/Debug/net9.0).
+          # O Jellyfin só carrega assemblies na raiz da pasta do plugin, então
+          # movemos todos os artefatos para lá e limpamos os diretórios vazios.
+          find "$out" -mindepth 2 -type f \
+            \( -name '*.dll' -o -name '*.json' -o -name '*.pdb' -o -name '*.png' \) \
+            -exec mv -f -t "$out" {} +
+          find "$out" -mindepth 1 -type d -empty -delete
+        ''}
         cp ${pkgs.writeText "meta.json" meta} "$out/meta.json"
       '';
 
@@ -91,6 +101,91 @@ let
     imagePath = ""; # este release não inclui logo.png
     url = "https://github.com/webbster64/jellyfin-plugin-AnimeMultiSource/releases/download/v1.0.4.9/AnimeMultiSource_v1.0.4.9.zip";
     sha256 = "0kxds1cav7akqsb5k5zq4pq925ibmyjkzgxh31rj69ad30ychrmd";
+  };
+
+  # Cria coleções automaticamente por regras (gênero, estúdio, etc.).
+  # OBS: o release empacota a DLL em bin/Debug/net9.0 → flatten = true.
+  autoCollections = mkPlugin {
+    pname = "auto-collections";
+    version = "0.0.4.1";
+    guid = "06ebf4a9-1326-4327-968d-8da00e1ea2eb";
+    displayName = "Auto Collections";
+    owner = "KeksBombe";
+    targetAbi = "10.11.0.0";
+    imagePath = "";
+    flatten = true;
+    url = "https://github.com/KeksBombe/jellyfin-plugin-auto-collections/releases/download/0.0.4.1/auto-collections-0.0.4.1.zip";
+    sha256 = "0v35ircfbwxp8mpxdpx07z6lwg5j4q527pl2m7n5hhkfcj4qd5f7";
+  };
+
+  # Detecta e permite pular aberturas/encerramentos (usa File Transformation
+  # para injetar o botão "Skip" na UI web).
+  introSkipper = mkPlugin {
+    pname = "intro-skipper";
+    version = "1.10.11.22";
+    guid = "c83d86bb-a1e0-4c35-a113-e2101cf4ee6b";
+    displayName = "Intro Skipper";
+    owner = "intro-skipper";
+    targetAbi = "10.11.11.0";
+    imagePath = "";
+    url = "https://github.com/intro-skipper/intro-skipper/releases/download/10.11/v1.10.11.22/intro-skipper-v1.10.11.22.zip";
+    sha256 = "0zh88p25lr1ilj8n7c6h5bgpyy86s98l88pgf57d70m4jgm1c3rp";
+  };
+
+  # Páginas/abas separadas na home (Movies, Anime, TV…). Depende do
+  # File Transformation. Release específico para o ABI 10.11.11.
+  pluginPages = mkPlugin {
+    pname = "plugin-pages";
+    version = "2.4.11.0";
+    guid = "5b6550fa-a014-4f4c-8a2c-59a43680ac6d";
+    displayName = "Plugin Pages";
+    owner = "IAmParadox27";
+    targetAbi = "10.11.11.0";
+    url = "https://github.com/IAmParadox27/jellyfin-plugin-pages/releases/download/2.4.11.0/Release-10.11.11.zip";
+    sha256 = "0624pl8cpzx8rxlgcg144sk1f6cnx3fhw7jsms0nksz9g7z4061v";
+  };
+
+  # Permite que usuários definam o próprio avatar por upload/URL.
+  getAvatar = mkPlugin {
+    pname = "get-avatar";
+    version = "1.6.4.1";
+    guid = "88accc81-d913-44b3-b1d3-2abfa457dd2d";
+    displayName = "GetAvatar";
+    owner = "cedev-1";
+    category = "User Management";
+    targetAbi = "10.11.5.0";
+    imagePath = "";
+    url = "https://github.com/cedev-1/jellyfin-plugin-GetAvatar/releases/download/v1.6.4.1/Jellyfin.Plugin.GetAvatar-v1.6.4.1.zip";
+    sha256 = "146r0cj5cjh1bzngpi9fv7jhrxcy0cmcb9jk7nhbbgj8gvk278a8";
+  };
+
+  # Sincroniza avaliações/watched com uma conta Letterboxd.
+  letterboxdSync = mkPlugin {
+    pname = "letterboxd-sync";
+    version = "1.8.6.0";
+    guid = "b1fb3d98-3336-4b87-a5c9-8a948bd87233";
+    displayName = "LetterboxdSync";
+    owner = "Gizmo091";
+    targetAbi = "10.11.0.0";
+    imagePath = "";
+    url = "https://github.com/Gizmo091/jellyfin-plugin-letterboxd-sync/releases/download/v1.8.6/jellyfin-plugin-letterboxd-sync-v1.8.6.zip";
+    sha256 = "1pgsps97dz3ki828byibz9mfjdignq9fcvs5l4xgv2fnqi0c45c9";
+  };
+
+  # Gera legendas por IA (Whisper). ATENÇÃO: precisa de um backend Whisper
+  # externo (whisper-asr-webservice) configurado nas opções do plugin;
+  # sozinho ele não transcreve. Instalado aqui, backend fica a seu critério.
+  whisperSubs = mkPlugin {
+    pname = "whisper-subs";
+    version = "3.17.0.0";
+    guid = "97124bd9-c8cd-4a53-a213-e593aa3fef52";
+    displayName = "WhisperSubs";
+    owner = "GeiserX";
+    category = "Subtitles";
+    targetAbi = "10.11.0.0";
+    imagePath = "";
+    url = "https://github.com/GeiserX/whisper-subs/releases/download/v3.17.0.0/WhisperSubs_3.17.0.0.zip";
+    sha256 = "1aylzn7aqv54xd2lrbwxhnyhdb76cyjsb1yiaqryh9hy3jjvm8qc";
   };
 
   # ElegantFin é um tema puramente CSS: entra via "Custom CSS" (branding.xml).
@@ -159,6 +254,12 @@ in
       sync_plugin "FileTransformation" "${fileTransformation}"
       sync_plugin "MediaBar" "${mediaBar}"
       sync_plugin "AnimeMultiSource" "${animeMultiSource}"
+      sync_plugin "AutoCollections" "${autoCollections}"
+      sync_plugin "IntroSkipper" "${introSkipper}"
+      sync_plugin "PluginPages" "${pluginPages}"
+      sync_plugin "GetAvatar" "${getAvatar}"
+      sync_plugin "LetterboxdSync" "${letterboxdSync}"
+      sync_plugin "WhisperSubs" "${whisperSubs}"
 
       # ElegantFin (tema CSS): semeia só em instalação nova, sem sobrescrever
       # um branding.xml já existente/editado pelo usuário na interface.
