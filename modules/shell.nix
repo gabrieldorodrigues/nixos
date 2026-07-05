@@ -56,6 +56,12 @@ in
 
       # zoxide (smart cd) integration.
       zoxide init fish | source
+
+      # Chave da API NVIDIA NIM (usada pelo opencode). Lida de um arquivo fora
+      # do repositório para não versionar segredos.
+      if test -r "$HOME/.config/secrets/nvidia-api-key"
+          set -gx NVIDIA_API_KEY (string trim <"$HOME/.config/secrets/nvidia-api-key")
+      end
     '';
   };
 

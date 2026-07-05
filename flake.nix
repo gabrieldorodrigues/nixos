@@ -4,6 +4,11 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
+    # Canal unstable — usado pontualmente para pacotes que precisam de uma
+    # versão mais nova que a do 26.05 (ex.: opencode). O resto do sistema
+    # continua no 26.05.
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";

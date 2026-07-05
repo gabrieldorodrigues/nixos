@@ -9,6 +9,7 @@
     ./torlink
     ./rclone
     ./mako
+    ./opencode
     ./direnv.nix
     ./fastfetch
   ];
