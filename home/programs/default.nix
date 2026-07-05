@@ -7,6 +7,7 @@
     ./walker
     ./waybar
     ./torlink
+    ./rclone
     ./direnv.nix
     ./fastfetch
   ];
