@@ -20,6 +20,21 @@
       cursor_shape = "beam";
       scrollback_lines = 10000;
 
+      # --- animations (kitty 0.36+/0.40+) ---
+      # cursor_trail draws a smooth "comet" trail that chases the cursor to its
+      # new spot, making big jumps easy to follow. The decay pair is the
+      # fast/slow fade times (seconds); start_threshold is how many cells the
+      # cursor must jump before the trail kicks in (so plain typing stays calm).
+      cursor_trail = 3;
+      cursor_trail_decay = "0.1 0.4";
+      cursor_trail_start_threshold = 2;
+      # Soft, eased cursor blink that settles after a while of no typing.
+      cursor_blink_interval = "0.5 ease-in-out";
+      cursor_stop_blinking_after = "15.0";
+      # Gentle screen flash instead of a sound (audio bell is off above).
+      visual_bell_duration = "0.10 ease-out";
+      visual_bell_color = "#F9E2AF";
+
       # --- Catppuccin Mocha ---
       foreground = "#CDD6F4";
       background = "#1E1E2E";
