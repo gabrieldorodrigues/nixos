@@ -8,6 +8,7 @@
     ./waybar
     ./torlink
     ./rclone
+    ./mako.nix
     ./direnv.nix
     ./fastfetch
   ];
