@@ -92,6 +92,48 @@ let
     # the three landscape thumbnails per row are large.
     exec walker --provider menus:wallpapers --hideqa --maxwidth 900 --maxheight 700
   '';
+
+  # Restart elephant (walker's data backend) so the launcher re-scans the XDG
+  # desktop dirs. elephant only indexes applications at startup, so after a
+  # `nixos-rebuild` that adds or removes apps it keeps serving the PREVIOUS
+  # generation's list until restarted — this is why newly installed apps do
+  # not show up in walker until the next login. The `update` alias runs this
+  # automatically after a successful rebuild (see modules/shell.nix).
+  reindexWalker = pkgs.writeShellScriptBin "reindex-walker" ''
+    export PATH=${pkgs.elephant}/bin:${pkgs.walker}/bin:${pkgs.procps}/bin:${pkgs.coreutils}/bin:${pkgs.util-linux}/bin:$PATH
+
+    # Only meaningful inside a running graphical session. When elephant is not
+    # running (e.g. an update over SSH or from a TTY) there is nothing stale to
+    # fix: the Hyprland autostart indexes the new generation at the next login.
+    if ! pgrep -f 'bin/elephant' >/dev/null 2>&1; then
+      echo "reindex-walker: elephant not running, nothing to do."
+      exit 0
+    fi
+
+    echo "reindex-walker: restarting elephant so the launcher sees new apps..."
+
+    # elephant/walker are wrapped by NixOS as .<name>-wrapped, whose kernel
+    # comm is truncated past 15 chars, so also match on the executable path.
+    pkill -9 -f 'bin/elephant' 2>/dev/null || true
+    pkill -9 -x elephant       2>/dev/null || true
+    pkill -9 -f 'bin/walker'   2>/dev/null || true
+    pkill -9 -x walker         2>/dev/null || true
+
+    # Drop the stale control socket so walker reconnects to the fresh one.
+    rm -f "''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/elephant/elephant.sock"
+
+    sleep 0.3
+
+    # Relaunch both from $HOME, fully detached from this shell. The working
+    # directory matters: apps launched from walker inherit its CWD, so starting
+    # it in a directory that later disappears (e.g. running `update` from a temp
+    # dir) would break sandboxed apps like Steam. $HOME is always valid.
+    cd "$HOME" || cd /
+    setsid -f elephant >/dev/null 2>&1
+    setsid -f walker --gapplication-service >/dev/null 2>&1
+
+    echo "reindex-walker: done."
+  '';
 in
 {
   # Enable the Hyprland compositor. This also wires up XWayland and the
@@ -145,6 +187,7 @@ in
     wallpaperInit       # starts awww + applies the default wallpaper
     wallpaperCycle      # cycles through ~/Pictures/wallpaper (Super+Shift+W)
     wallpaperMenu       # walker wallpaper picker (Super+Ctrl+Space)
+    reindexWalker       # restart elephant so walker sees newly installed apps
     hyprlock            # screen locker
     hypridle            # idle daemon (auto-lock)
     mako                # notification daemon

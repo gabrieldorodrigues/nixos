@@ -1,13 +1,29 @@
 # Shell configuration: fish (default) + zsh, Tide prompt and plugins.
 { config, pkgs, ... }:
 
+let
+  # `update` wrapper: rebuild the system from the flake, then reindex the
+  # walker launcher so newly installed apps appear without a re-login. Any
+  # extra arguments (e.g. --show-trace) are forwarded to nixos-rebuild. The
+  # reindex only runs on a successful rebuild and no-ops outside a graphical
+  # session (see reindex-walker in modules/hyprland.nix).
+  nixosUpdate = pkgs.writeShellScriptBin "nixos-update" ''
+    sudo nixos-rebuild switch --flake /etc/nixos#nixos "$@"
+    rc=$?
+    if [ "$rc" -eq 0 ]; then
+      reindex-walker || true
+    fi
+    exit "$rc"
+  '';
+in
 {
   # Fish shell as the main interactive shell.
   programs.fish = {
     enable = true;
 
     shellAliases = {
-      update = "sudo nixos-rebuild switch --flake /etc/nixos#nixos";
+      # `nixos-update` = rebuild + reindex walker (see the let block above).
+      update = "nixos-update";
       ll = "ls -lah";
     };
 
@@ -45,6 +61,7 @@
 
   # Fish plugins (auto-loaded from vendor dirs by fish on NixOS).
   environment.systemPackages = with pkgs; [
+    nixosUpdate               # `update` wrapper: rebuild + reindex walker
     fishPlugins.tide          # prompt
     fishPlugins.fzf-fish      # fzf key bindings (Ctrl+R, Ctrl+T, etc.)
     fishPlugins.autopair      # auto-close brackets/quotes
@@ -59,7 +76,7 @@
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
     shellAliases = {
-      update = "sudo nixos-rebuild switch --flake /etc/nixos#nixos";
+      update = "nixos-update";
       ll = "ls -lah";
       ".." = "cd ..";
     };
