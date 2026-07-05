@@ -6,6 +6,7 @@
     ./kitty
     ./walker
     ./waybar
+    ./torlink
     ./direnv.nix
     ./fastfetch
   ];

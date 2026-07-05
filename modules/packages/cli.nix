@@ -1,10 +1,6 @@
 # CLI, terminal e ferramentas de linha de comando (TUIs).
-{ pkgs, inputs, ... }:
+{ pkgs, ... }:
 
-let
-  # torlink (torlnk) — buscador de torrents no terminal (from flake input).
-  torlink = inputs.torlink.packages.${pkgs.stdenv.hostPlatform.system}.default;
-in
 {
   environment.systemPackages =
     with pkgs;
@@ -25,6 +21,7 @@ in
       tailscale
       # btop is provided by Home Manager (home/programs/btop) so its config
       # (Catppuccin Mocha theme) is managed there.
-      torlink
+      # torlink (torlnk) is provided by Home Manager (home/programs/torlink),
+      # which adds a custom RARBG search source to the upstream package.
     ];
 }
