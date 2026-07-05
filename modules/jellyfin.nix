@@ -189,10 +189,20 @@ let
   };
 
   # ElegantFin é um tema puramente CSS: entra via "Custom CSS" (branding.xml).
+  # Também esconde o pôster (backdrop) do Media Bar quando o trailer toca,
+  # deixando o trailer ocupar a largura toda em vez de dividir a tela.
   brandingXml = pkgs.writeText "branding.xml" ''
     <?xml version="1.0" encoding="utf-8"?>
     <BrandingOptions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <CustomCss>@import url("https://cdn.jsdelivr.net/gh/lscambo13/ElegantFin@main/Theme/ElegantFin-jellyfin-theme-build-latest-minified.css");</CustomCss>
+      <CustomCss>@import url("https://cdn.jsdelivr.net/gh/lscambo13/ElegantFin@main/Theme/ElegantFin-jellyfin-theme-build-latest-minified.css");
+    /* Media Bar: ao tocar o trailer, mostra só o trailer (esconde o pôster). */
+    .backdrop.with-video { opacity: 0 !important; }
+    .video-container {
+      -webkit-mask-image: linear-gradient(to top, transparent 2%, rgba(0,0,0,.6) 10%, #000 18%) !important;
+      mask-image: linear-gradient(to top, transparent 2%, rgba(0,0,0,.6) 10%, #000 18%) !important;
+      -webkit-mask-composite: intersect !important;
+      mask-composite: intersect !important;
+    }</CustomCss>
       <SplashscreenEnabled>true</SplashscreenEnabled>
     </BrandingOptions>
   '';
