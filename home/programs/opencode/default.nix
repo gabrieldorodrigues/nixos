@@ -108,13 +108,19 @@ in
         command = [ "${cbm}/bin/codebase-memory-mcp" ];
         enabled = true;
       };
-      # TypeUI — servidor MCP remoto (hospedado) com design systems e prompts de
-      # UI. Streamable HTTP; o opencode faz o OAuth no primeiro uso.
-      typeui = {
-        type = "remote";
-        url = "https://mcp.typeui.sh";
-        enabled = true;
-      };
+      # TypeUI (MCP remoto de design/UI) REMOVIDO: é um produto PAGO (Pro, ~US$30/
+      # mês com trial de 7 dias) cujo endpoint hospedado exige login OAuth via
+      # conta (servidor de auth Supabase). Sem token ele responde 401
+      # "Missing Authorization header", quebrando toda mensagem no opencode.
+      # Para reativar (após criar conta + iniciar o trial em typeui.sh):
+      #   typeui = {
+      #     type = "remote";
+      #     url = "https://mcp.typeui.sh";
+      #     enabled = true;
+      #     headers.Authorization = "Bearer {env:TYPEUI_TOKEN}";
+      #   };
+      # exportando TYPEUI_TOKEN a partir de ~/.config/secrets/ (como a chave da
+      # NVIDIA), OU deixando o opencode conduzir o fluxo OAuth no primeiro uso.
     };
   };
 }
