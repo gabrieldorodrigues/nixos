@@ -174,13 +174,26 @@ in
   #   - gvfs:        provides trash://, recent://, network://, smb://, mtp://…
   #                  Without it there is no Trash (lixeira) and the Trash /
   #                  Network / Other Locations sidebar tabs fail to load.
-  #   - tinysparql:  SPARQL metadata store used by the Recent / Starred / Search
-  #                  views (formerly services.gnome.tracker).
-  #   - localsearch: the file indexer that feeds tinysparql (formerly
-  #                  services.gnome.tracker-miners).
+  #   - tinysparql:  SPARQL metadata store used by the Recent / Starred views
+  #                  (formerly services.gnome.tracker).
   services.gvfs.enable = true;
   services.gnome.tinysparql.enable = true;
-  services.gnome.localsearch.enable = true;
+
+  # localsearch (o indexador de arquivos, ex services.gnome.tracker-miners)
+  # fica DESLIGADO de propósito. Seu unit (localsearch-3.service) tem
+  # `ConditionEnvironment=XDG_SESSION_CLASS=user`, e nesta sessão Hyprland o
+  # `systemd --user` NÃO recebe XDG_SESSION_CLASS (a variável existe na sessão,
+  # via pam/loginctl Class=user, mas não é importada para o manager do usuário —
+  # isso só aconteceria com UWSM). Então o indexador era sempre "skipped".
+  # Consequência: ao abrir, o Nautilus tentava ativar o miner via D-Bus
+  # (org.freedesktop.Tracker3.Miner.Files) e, no PRIMEIRO launch após o boot, a
+  # ativação ficava presa no timeout até falhar (~10-20 s de atraso; nos
+  # launches seguintes o cache negativo tornava tudo rápido). Como o indexador
+  # nunca funcionou de fato aqui, desligá-lo não perde nenhuma função em uso e
+  # remove o nome D-Bus → o Nautilus retorna na hora e abre rápido no boot.
+  # (Para reativar a busca por conteúdo seria preciso importar XDG_SESSION_CLASS
+  # no systemd --user e religar localsearch — aí ele passa a indexar em background.)
+  services.gnome.localsearch.enable = false;
 
   # GNOME Online Accounts (GOA). Enables the goa-daemon + D-Bus service that
   # stores cloud credentials (Google, Nextcloud, Microsoft…). Combined with the
