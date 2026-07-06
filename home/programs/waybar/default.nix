@@ -148,8 +148,8 @@ let
       "spacing": 0,
       "height": 36,
       "border-radius": 25,
-      "margin-right": 10,
-      "margin-left": 10,
+      "margin-right": 300,
+      "margin-left": 300,
       "margin-top": 8,
     ${modulesConfig}
     }
@@ -172,11 +172,19 @@ let
     .modules-left { margin-left: 8px; }
     .modules-right { margin-right: 8px; }
 
+    /* Keep the toplevel surface fully transparent. Giving the window itself an
+       opaque background makes GTK mark the whole surface opaque, so Hyprland
+       renders the rounded-corner / side-gap pixels as solid BLACK (they vanish
+       in screenshots because grim composites the real, transparent buffer).
+       Painting the bar on an inner box keeps those gaps transparent. */
     window#waybar {
+      background: transparent;
+    }
+    window#waybar > box {
       background-color: @background;
       transition-property: background-color;
       transition-duration: .5s;
-      border-radius: 32px;
+      border-radius: 18px;
     }
 
     window#waybar.empty #window {
@@ -194,7 +202,7 @@ let
       padding: 0px 5px;
       margin: 3.5px 3.5px;
       border-radius: 11px;
-      background-color: alpha(@foreground, 0.1);
+      background-color: transparent;
       opacity: 0.95;
     }
     #workspaces button { color: @foreground; padding: 0 6px; margin: 0 1.5px; min-width: 9px; }
@@ -268,7 +276,7 @@ let
     #group-center3, #group_center3, #center3,
     #group-center2, #group_center2, #center2 {
       font-weight: 800;
-      background: alpha(@foreground, 0.1);
+      background: transparent;
       border-radius: 12px;
       padding: 0px 5px;
       margin: 3.5px 2px;
