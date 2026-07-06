@@ -22,7 +22,7 @@ let
 
     "group/center3": {
       "orientation": "inherit",
-      "modules": [ "cpu", "memory", "custom/separator#blank", "custom/cover", "custom/media" ]
+      "modules": [ "cpu", "memory", "custom/separator#blank", "image#cover", "custom/media" ]
     },
 
     "group/right1": {
@@ -125,9 +125,9 @@ let
 
     "custom/separator#blank": { "format": " ", "interval": "once", "tooltip": false },
 
-    "custom/cover": {
+    "image#cover": {
       "exec": "~/.config/waybar/cover.sh",
-      "return-type": "json",
+      "size": 20,
       "interval": 2,
       "tooltip": false,
       "on-click": "playerctl play-pause"
@@ -234,18 +234,15 @@ let
 
     #battery, #pulseaudio { min-width: 12px; }
 
-    #custom-cover {
-      min-width: 22px;
-      min-height: 22px;
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: cover;
-      border-radius: 6px;
-      margin: 0 6px 0 0;
+    #cover, #image {
+      margin: 4px 6px 4px 0;
       padding: 0;
+      min-width: 20px;
     }
-    #custom-cover.art {
-      background-image: url("${config.home.homeDirectory}/.cache/waybar/cover.png");
+    #cover.empty, #image.empty {
+      margin: 0;
+      padding: 0;
+      min-width: 0;
     }
 
     #clock { font-size: 13px; font-weight: 700; padding: 0 14px; }
@@ -323,44 +320,58 @@ let
 
   coverScript = ''
     #!/usr/bin/env bash
-    # Rounded album-cover thumbnail for waybar. Writes the current MPRIS art to
-    # a stable cache file and forces a CSS reload (SIGUSR2) ONLY when the art
-    # actually changes, so the cover refreshes (busting GTK's image cache)
-    # without flickering the whole bar on every tick.
+    # Album-cover thumbnail for waybar's built-in image module. The image module
+    # re-reads the file from disk every interval, so the cover updates with NO
+    # CSS reload (SIGUSR2) => no bar flicker on track change. This script only
+    # prints the cached PNG path; the heavy work (download + rounding) runs in
+    # the background so the exec returns fast (the image module runs it on the
+    # GTK main thread each tick). Corners are pre-rounded with rsvg-convert
+    # because border-radius does not clip a GtkImage's pixbuf.
     cache="$HOME/.cache/waybar"
-    cover="$cache/cover.png"
+    src="$cache/cover-src"
+    out="$cache/cover.png"
     marker="$cache/cover.url"
+    svg="$cache/cover.svg"
     mkdir -p "$cache"
 
     art=$(playerctl metadata mpris:artUrl 2>/dev/null)
 
     if [ -z "$art" ]; then
-      # No art -> hide the cover box; clear the marker so the next art is fresh.
-      if [ -s "$marker" ]; then
-        : > "$marker"
-        pkill -USR2 waybar 2>/dev/null
-      fi
-      echo '{"text": "", "class": "empty"}'
+      # No media -> drop the cached art so the image module hides itself.
+      : > "$marker"
+      rm -f "$out"
       exit 0
     fi
 
     last=$(cat "$marker" 2>/dev/null)
     if [ "$art" != "$last" ]; then
-      case "$art" in
-        file://*)
-          path=''${art#file://}
-          printf -v path '%b' "''${path//%/\\x}"
-          cp -f "$path" "$cover" 2>/dev/null
-          ;;
-        http://*|https://*)
-          curl -sfL --max-time 5 -o "$cover" "$art" 2>/dev/null
-          ;;
-      esac
       echo "$art" > "$marker"
-      pkill -USR2 waybar 2>/dev/null
+      {
+        ok=1
+        case "$art" in
+          file://*)
+            p=''${art#file://}
+            printf -v p '%b' "''${p//%/\\x}"
+            cp -f "$p" "$src" 2>/dev/null || ok=0
+            ;;
+          http://*|https://*)
+            curl -sfL --max-time 8 -o "$src" "$art" 2>/dev/null || ok=0
+            ;;
+          *) ok=0 ;;
+        esac
+        if [ "$ok" = 1 ]; then
+          W=40; H=40; R=8
+          printf '%s\n' \
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"$W\" height=\"$H\">" \
+            "<defs><clipPath id=\"r\"><rect width=\"$W\" height=\"$H\" rx=\"$R\" ry=\"$R\"/></clipPath></defs>" \
+            "<image xlink:href=\"file://$src\" width=\"$W\" height=\"$H\" preserveAspectRatio=\"xMidYMid slice\" clip-path=\"url(#r)\"/>" \
+            "</svg>" > "$svg"
+          rsvg-convert -w "$W" -h "$H" -o "$out.tmp" "$svg" 2>/dev/null && mv -f "$out.tmp" "$out"
+        fi
+      } &
     fi
 
-    echo '{"text": " ", "class": "art"}'
+    [ -f "$out" ] && echo "$out"
   '';
 
   windowScript = ''
@@ -418,6 +429,7 @@ in
     pavucontrol
     blueman
     curl
+    librsvg
   ];
 
   programs.waybar.enable = true;
