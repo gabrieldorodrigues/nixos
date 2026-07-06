@@ -21,6 +21,7 @@
       ../../modules/packages.nix
       ../../modules/dev.nix
       ../../modules/jellyfin.nix
+      ../../modules/torlink.nix
       ../../modules/git.nix
       ../../modules/nix-settings.nix
     ];

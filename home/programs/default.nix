@@ -6,7 +6,6 @@
     ./kitty
     ./walker
     ./waybar
-    ./torlink
     ./rclone
     ./mako
     ./opencode

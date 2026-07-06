@@ -38,12 +38,12 @@ automático de arquivos sobrescritos usando a extensão `.hm-bak`.
 
 As entradas externas:
 
-| Entrada        | Para que serve                                      |
-| -------------- | --------------------------------------------------- |
-| `nixpkgs`      | conjunto principal de pacotes (canal `nixos-26.05`) |
-| `home-manager` | configuração declarativa do usuário                 |
-| `zen-browser`  | navegador Zen empacotado como flake                 |
-| `torlink`      | buscador de torrents no terminal (`torlnk`)         |
+| Entrada        | Para que serve                                                  |
+| -------------- | --------------------------------------------------------------- |
+| `nixpkgs`      | conjunto principal de pacotes (canal `nixos-26.05`)             |
+| `home-manager` | configuração declarativa do usuário                             |
+| `zen-browser`  | navegador Zen empacotado como flake                             |
+| `torlink`      | fonte do container de torrents `torlnk` (`modules/torlink.nix`) |
 
 ## `hosts/`
 

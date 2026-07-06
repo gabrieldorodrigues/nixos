@@ -84,6 +84,16 @@ Python. O `lazydocker` já vem instalado.
 Servidor **Jellyfin** em container Docker, declarativo, com plugins, tema
 ElegantFin e Live TV (IPTV) pré-configurados. Detalhado em [JELLYFIN.md](JELLYFIN.md).
 
+### `torlink.nix`
+
+Buscador de torrents **torlink** (`torlnk`) rodando em container Docker
+declarativo (imagem construída pelo Nix a partir do input `torlink`, com a fonte
+RARBG injetada). O comando `torlnk` no PATH é um wrapper que abre a TUI dentro do
+container via `docker exec -it`, então o atalho `Super + Shift + T` continua
+igual. Os downloads caem em `~/Downloads/torlink` (a mesma biblioteca que o
+Jellyfin lê) e o estado (config, fila, histórico, seeds) persiste em
+`/var/lib/torlink`.
+
 ### `git.nix`
 
 Configuração de git no nível do sistema: nome e email do usuário, branch padrão
@@ -110,7 +120,6 @@ Ficam em [home/programs/](../home/programs) e são importados por
 | `fastfetch/` | resumo do sistema no terminal                           |
 | `direnv.nix` | ambientes por diretório (`direnv` + `nix-direnv`)       |
 | `rclone/`    | sincronização com armazenamento remoto                  |
-| `torlink/`   | buscador de torrents no terminal (`torlnk`)             |
 
 ## Onde mexer para tarefas comuns
 

@@ -247,9 +247,6 @@ let
 
     #clock { font-size: 13px; font-weight: 700; padding: 0 14px; }
     #pulseaudio { margin: 0 7px; }
-    #bluetooth { margin: 0 7px; }
-    #battery { margin: 0 7px; }
-    #custom-media { margin: 0 6px 0 0; }
     #custom-gamemode { margin-right: 8px; }
 
     tooltip {
