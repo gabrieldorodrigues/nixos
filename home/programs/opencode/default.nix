@@ -11,15 +11,21 @@
 # o binário fica no /nix/store somente-leitura). Assim recebemos versões novas
 # via rebuild, sem afetar o resto do sistema.
 #
-# A CHAVE DA API NÃO fica aqui (o repositório é público). Ela é lida da variável
-# de ambiente NVIDIA_API_KEY, que o fish exporta a partir de um arquivo fora do
-# repo (~/.config/secrets/nvidia-api-key) — ver modules/shell.nix.
+# A CHAVE DA API NÃO fica aqui (o repositório é público). O opencode a lê DIRETO
+# do arquivo ~/.config/secrets/nvidia-api-key via a interpolação nativa
+# `{file:...}` (ver options.apiKey abaixo). Isso funciona INDEPENDENTE de como o
+# opencode é aberto — inclusive por keybind (`kitty -e opencode`), que NÃO passa
+# por um fish interativo e portanto NÃO teria a env var NVIDIA_API_KEY (essa era
+# a causa do erro "AI_APICallError: Unauthorized"). O export em modules/shell.nix
+# continua (útil p/ outros clientes OpenAI-compat na CLI), mas o opencode não
+# depende mais dele.
 #
 # >>> PASSO MANUAL (só uma vez) <<<
 #   printf '%s' 'nvapi-suaChaveAqui' > ~/.config/secrets/nvidia-api-key
 #   chmod 600 ~/.config/secrets/nvidia-api-key
-#   (gere a chave em https://build.nvidia.com — NÃO reutilize chaves expostas)
-# Depois abra um novo terminal e rode:  opencode
+#   (use printf '%s' SEM newline no fim; gere a chave em https://build.nvidia.com
+#    — NÃO reutilize chaves expostas)
+# Depois é só abrir o opencode.
 let
   pkgsUnstable = import inputs.nixpkgs-unstable {
     system = pkgs.stdenv.hostPlatform.system;
@@ -87,7 +93,12 @@ in
       name = "NVIDIA NIM (free)";
       options = {
         baseURL = "https://integrate.api.nvidia.com/v1";
-        apiKey = "{env:NVIDIA_API_KEY}";
+        # Lê a chave DIRETO do arquivo (interpolação nativa do opencode). Não
+        # depende da env var NVIDIA_API_KEY estar exportada no ambiente — o que
+        # quebrava quando o opencode era aberto por keybind (kitty -e opencode),
+        # fora de um shell interativo. O arquivo deve conter SÓ a chave, sem
+        # newline no fim.
+        apiKey = "{file:~/.config/secrets/nvidia-api-key}";
       };
       models = {
         "z-ai/glm-5.2".name = "GLM-5.2";
