@@ -22,7 +22,7 @@ let
 
     "group/center3": {
       "orientation": "inherit",
-      "modules": [ "cpu", "memory", "custom/separator#blank", "custom/media" ]
+      "modules": [ "cpu", "memory", "custom/separator#blank", "custom/cover", "custom/media" ]
     },
 
     "group/right1": {
@@ -82,9 +82,10 @@ let
 
     "clock": {
       "interval": 1,
-      "format": " {:%H:%M:%S • %a, %d/%m}",
-      "format-alt": "{:%A, %d %B %Y}",
-      "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+      "locale": "pt_BR.UTF-8",
+      "format": " {:L%H:%M:%S • %a, %d/%m}",
+      "format-alt": "{:L%A, %d %B %Y}",
+      "tooltip-format": "<big>{:L%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
     },
 
     "battery": {
@@ -123,6 +124,14 @@ let
     },
 
     "custom/separator#blank": { "format": " ", "interval": "once", "tooltip": false },
+
+    "custom/cover": {
+      "exec": "~/.config/waybar/cover.sh",
+      "return-type": "json",
+      "interval": 2,
+      "tooltip": false,
+      "on-click": "playerctl play-pause"
+    },
 
     "custom/media": {
       "exec": "~/.config/waybar/media.sh",
@@ -225,6 +234,20 @@ let
 
     #battery, #pulseaudio { min-width: 12px; }
 
+    #custom-cover {
+      min-width: 22px;
+      min-height: 22px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      border-radius: 6px;
+      margin: 0 6px 0 0;
+      padding: 0;
+    }
+    #custom-cover.art {
+      background-image: url("${config.home.homeDirectory}/.cache/waybar/cover.png");
+    }
+
     #clock { font-size: 13px; font-weight: 700; padding: 0 14px; }
     #pulseaudio { margin: 0 7px; }
     #bluetooth { margin: 0 7px; }
@@ -286,11 +309,58 @@ let
   mediaScript = ''
     #!/usr/bin/env bash
     title=$(playerctl metadata title 2>/dev/null)
+    art=$(playerctl metadata mpris:artUrl 2>/dev/null)
     if [ -n "$title" ]; then
-      echo "󰎈  ''${title:0:25}"
+      if [ -n "$art" ]; then
+        echo "''${title:0:25}"
+      else
+        echo "󰎈  ''${title:0:25}"
+      fi
     else
       echo "󰎈  No media"
     fi
+  '';
+
+  coverScript = ''
+    #!/usr/bin/env bash
+    # Rounded album-cover thumbnail for waybar. Writes the current MPRIS art to
+    # a stable cache file and forces a CSS reload (SIGUSR2) ONLY when the art
+    # actually changes, so the cover refreshes (busting GTK's image cache)
+    # without flickering the whole bar on every tick.
+    cache="$HOME/.cache/waybar"
+    cover="$cache/cover.png"
+    marker="$cache/cover.url"
+    mkdir -p "$cache"
+
+    art=$(playerctl metadata mpris:artUrl 2>/dev/null)
+
+    if [ -z "$art" ]; then
+      # No art -> hide the cover box; clear the marker so the next art is fresh.
+      if [ -s "$marker" ]; then
+        : > "$marker"
+        pkill -USR2 waybar 2>/dev/null
+      fi
+      echo '{"text": "", "class": "empty"}'
+      exit 0
+    fi
+
+    last=$(cat "$marker" 2>/dev/null)
+    if [ "$art" != "$last" ]; then
+      case "$art" in
+        file://*)
+          path=''${art#file://}
+          printf -v path '%b' "''${path//%/\\x}"
+          cp -f "$path" "$cover" 2>/dev/null
+          ;;
+        http://*|https://*)
+          curl -sfL --max-time 5 -o "$cover" "$art" 2>/dev/null
+          ;;
+      esac
+      echo "$art" > "$marker"
+      pkill -USR2 waybar 2>/dev/null
+    fi
+
+    echo '{"text": " ", "class": "art"}'
   '';
 
   windowScript = ''
@@ -347,6 +417,7 @@ in
     pamixer
     pavucontrol
     blueman
+    curl
   ];
 
   programs.waybar.enable = true;
@@ -356,6 +427,7 @@ in
     "waybar/style.css".text = colors + baseStyle;
 
     "waybar/media.sh" = { text = mediaScript; executable = true; };
+    "waybar/cover.sh" = { text = coverScript; executable = true; };
     "waybar/window.sh" = { text = windowScript; executable = true; };
   };
 }
