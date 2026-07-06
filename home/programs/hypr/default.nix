@@ -34,6 +34,11 @@
           hl.exec_cmd("wallpaper-init")
           hl.exec_cmd("mako")
           hl.exec_cmd("hypridle")
+          -- Agente de autenticação polkit (diálogos de senha p/ montar discos no
+          -- Nautilus etc.). O unit vem de modules/hyprland.nix (systemd.packages);
+          -- WAYLAND_DISPLAY já está no systemd --user, então o start funciona
+          -- mesmo sem graphical-session.target (esta sessão não usa UWSM).
+          hl.exec_cmd("systemctl --user start hyprpolkitagent.service")
           hl.exec_cmd("nm-applet --indicator")
           -- Walker launcher backend + service (started before it's ever invoked)
           hl.exec_cmd("elephant")

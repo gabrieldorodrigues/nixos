@@ -195,6 +195,37 @@ in
   # no systemd --user e religar localsearch — aí ele passa a indexar em background.)
   services.gnome.localsearch.enable = false;
 
+  # Agente polkit (hyprpolkitagent). A sessão Hyprland não tem um ambiente de
+  # desktop que forneça um agente de autenticação polkit, então operações
+  # privilegiadas pedidas por apps gráficos (ex.: o Nautilus montar um HD/SSD
+  # interno, que exige a ação org.freedesktop.udisks2.filesystem-mount-system)
+  # falhavam caladas com "Not authorized" — não havia quem mostrasse o diálogo
+  # de senha. Este pacote traz o unit systemd de usuário hyprpolkitagent.service
+  # (ConditionEnvironment=WAYLAND_DISPLAY, que já está no systemd --user); ele é
+  # iniciado no autostart do Hyprland (home/programs/hypr).
+  systemd.packages = [ pkgs.hyprpolkitagent ];
+
+  # Regra polkit: permite aos membros do grupo wheel (o usuário está nele)
+  # montar/desmontar/ejetar discos — inclusive os INTERNOS/fixos (…-mount-system)
+  # e volumes criptografados — SEM digitar a senha toda vez. É o comportamento
+  # padrão de desktops GNOME/KDE completos; aqui a sessão Hyprland não traz
+  # nenhuma regra equivalente, então sem isto cada montagem pediria autenticação.
+  # Máquina pessoal single-user cujo dono já tem sudo via wheel → risco aceitável.
+  security.polkit.enable = true;
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if ((action.id == "org.freedesktop.udisks2.filesystem-mount-system" ||
+           action.id == "org.freedesktop.udisks2.filesystem-mount" ||
+           action.id == "org.freedesktop.udisks2.filesystem-mount-other-seat" ||
+           action.id == "org.freedesktop.udisks2.encrypted-unlock" ||
+           action.id == "org.freedesktop.udisks2.eject-media" ||
+           action.id == "org.freedesktop.udisks2.power-off-drive") &&
+          subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+      }
+    });
+  '';
+
   # GNOME Online Accounts (GOA). Enables the goa-daemon + D-Bus service that
   # stores cloud credentials (Google, Nextcloud, Microsoft…). Combined with the
   # GOA-enabled gvfs above, adding a Google account here makes the Drive show up
