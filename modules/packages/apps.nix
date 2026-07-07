@@ -45,7 +45,7 @@ in
       bitwarden-desktop
       localsend
       deluge
-      proton-vpn
+      proton-vpn-cli
 
       # Tema de ícones (usado pelo Walker e gerenciadores de arquivos).
       # Papirus com as pastas recoloridas para o accent do Catppuccin Mocha
