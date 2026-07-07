@@ -1,6 +1,25 @@
 { config, lib, pkgs, ... }:
 
 let
+  # Waybar 0.15.0 envia o dispatch legado "dispatch workspace N" ao clicar numa
+  # workspace, o que quebra no IPC Lua do Hyprland >= 0.54 (aqui e 0.55): o
+  # Hyprland interpreta o comando como Lua e da erro de sintaxe, entao o clique
+  # nao troca de desktop. Reescrevemos o handler de clique (workspace.cpp) para
+  # o formato Lua "/dispatch hl.dsp.focus({ workspace = \"N\" })" que o Hyprland
+  # Lua aceita. Feito via substituteInPlace (nao um .patch externo) para o build
+  # nao depender de um arquivo git-trackeado (/etc/nixos/.git e' root-owned).
+  waybarPkg = pkgs.waybar.overrideAttrs (old: {
+    postPatch = (old.postPatch or "") + ''
+      substituteInPlace src/modules/hyprland/workspace.cpp \
+        --replace-fail 'm_ipc.getSocket1Reply("dispatch focusworkspaceoncurrentmonitor " + std::to_string(id()));' 'm_ipc.getSocket1Reply("/dispatch hl.dsp.focus({ workspace = \"" + std::to_string(id()) + "\", on_current_monitor = true })");' \
+        --replace-fail 'm_ipc.getSocket1Reply("dispatch workspace " + std::to_string(id()));' 'm_ipc.getSocket1Reply("/dispatch hl.dsp.focus({ workspace = \"" + std::to_string(id()) + "\" })");' \
+        --replace-fail 'm_ipc.getSocket1Reply("dispatch focusworkspaceoncurrentmonitor name:" + name());' 'm_ipc.getSocket1Reply("/dispatch hl.dsp.focus({ workspace = \"name:" + name() + "\", on_current_monitor = true })");' \
+        --replace-fail 'm_ipc.getSocket1Reply("dispatch workspace name:" + name());' 'm_ipc.getSocket1Reply("/dispatch hl.dsp.focus({ workspace = \"name:" + name() + "\" })");' \
+        --replace-fail 'm_ipc.getSocket1Reply("dispatch togglespecialworkspace " + name());' 'm_ipc.getSocket1Reply("/dispatch hl.dsp.workspace.toggle_special(\"" + name() + "\")");' \
+        --replace-fail 'm_ipc.getSocket1Reply("dispatch togglespecialworkspace");' 'm_ipc.getSocket1Reply("/dispatch hl.dsp.workspace.toggle_special()");'
+    '';
+  });
+
   # Catppuccin Mocha palette (replaces the Omarchy theme @import).
   colors = ''
     @define-color background #1e1e2e;
@@ -228,7 +247,7 @@ let
       padding-right: 5px;
       padding-left: 5px;
     }
-    #workspaces button.active:hover { background-color: alpha(@background, 0.5); color: @foreground; }
+    #workspaces button.active:hover { background-color: transparent; color: #11111b; }
     #workspaces button:hover { background-color: transparent; }
     #workspaces button.empty:hover { border-radius: 18px; background: transparent; opacity: 1; }
 
@@ -430,6 +449,7 @@ in
   ];
 
   programs.waybar.enable = true;
+  programs.waybar.package = waybarPkg;
 
   xdg.configFile = {
     "waybar/config.jsonc".text = dockConfig;
