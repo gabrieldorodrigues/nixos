@@ -40,6 +40,15 @@ let
   uid = "1000";
   gid = "100";
 
+  # Portas FIXAS de escuta do BitTorrent. Por padrão o WebTorrent (engine do
+  # torlink) sorteia portas aleatórias a cada start, então nenhuma regra de
+  # firewall consegue liberar conexões de entrada — e sem entrada não há como
+  # SEEDAR (peers precisam conseguir te conectar) nem receber peers extras no
+  # download. Fixamos aqui, injetamos via env no engine (postPatch abaixo) e
+  # liberamos no firewall. torrentPort = wire TCP + µTP (UDP); dhtPort = DHT (UDP).
+  torrentPort = 51413;
+  dhtPort = 51414;
+
   # ---------------------------------------------------------------------------
   # Fonte RARBG (movies / tv / games). Espelha a abordagem do source 1337x:
   # raspa a tabela de resultados e abre a página de detalhe de cada torrent para
@@ -257,6 +266,20 @@ let
         | "rargb-movies"
         | "rargb-tv"
         | "rargb-games";'
+
+      # 4. Pin the WebTorrent listen ports from env (TORLINK_TORRENT_PORT /
+      #    TORLINK_DHT_PORT). Upstream lets WebTorrent pick a RANDOM port every
+      #    start, so no firewall rule can ever match it — which is why inbound
+      #    peers and seeding don't work. With a fixed, firewall-opened port,
+      #    incoming connections (and thus seeding) work. 0/unset keeps the
+      #    upstream random behaviour, so this is a no-op when the env is absent.
+      substituteInPlace src/download/engine.ts \
+        --replace-fail \
+          'this.client = new WebTorrent();' \
+          'const _tlPort = Number(process.env.TORLINK_TORRENT_PORT) || 0;
+      const _tlDht = Number(process.env.TORLINK_DHT_PORT) || 0;
+      const _tlOpts = _tlPort > 0 ? { torrentPort: _tlPort, dhtPort: _tlDht > 0 ? _tlDht : _tlPort + 1 } : {};
+      this.client = new WebTorrent(_tlOpts);'
     '';
   });
 
@@ -282,6 +305,9 @@ let
         "HOME=/state"
         "TMPDIR=/state/tmp"
         "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+        # Portas fixas de escuta do BitTorrent (lidas pelo engine, ver postPatch).
+        "TORLINK_TORRENT_PORT=${toString torrentPort}"
+        "TORLINK_DHT_PORT=${toString dhtPort}"
       ];
       # Processo âncora: mantém o container de pé para o `docker exec -it`.
       # A TUI em si é iniciada sob demanda pelo wrapper `torlnk`.
@@ -302,6 +328,30 @@ let
         echo "torlink: container não está rodando. Suba com: sudo systemctl start docker-torlink.service" >&2
         exit 1
       }
+    fi
+
+    # Instância única. O motor do torlink (WebTorrent) roda DENTRO do processo
+    # da TUI, e o `docker exec` NÃO mata esse processo quando o terminal fecha —
+    # ele fica órfão no container segurando a porta fixa do BitTorrent (e ainda
+    # seedando). Ao abrir uma nova TUI, ela não consegue o bind da porta e morre
+    # com "client is destroyed"; pior, duas engines vivas corrompem os arquivos
+    # de estado (queue.json/seeds.json). Como só há download/seed enquanto uma
+    # TUI está aberta, encerramos qualquer TUI remanescente antes de abrir outra.
+    # Os PIDs (namespace do host) aparecem no `docker top` e pertencem ao usuário
+    # (uid ${uid}), então podem ser mortos daqui mesmo, sem sudo.
+    old="$("$docker" top torlink 2>/dev/null | ${pkgs.gawk}/bin/awk '/cli\.cjs/ {print $2}')"
+    if [ -n "$old" ]; then
+      kill $old 2>/dev/null || true
+      # Espera as engines saírem (flush de estado + liberação da porta), com teto
+      # de ~3s; depois força com SIGKILL o que sobrar.
+      n=0
+      while [ "$n" -lt 15 ]; do
+        left="$("$docker" top torlink 2>/dev/null | ${pkgs.gawk}/bin/awk '/cli\.cjs/ {print $2}')"
+        [ -z "$left" ] && break
+        ${pkgs.coreutils}/bin/sleep 0.2
+        n=$((n + 1))
+      done
+      kill -9 $old 2>/dev/null || true
     fi
 
     # -it porque a TUI (Ink) precisa de PTY; TERM/COLORTERM forçados porque a
@@ -331,6 +381,16 @@ in
       "--network=host"
     ];
   };
+
+  # Libera a porta fixa de BitTorrent para conexões de ENTRADA. Sem isto o
+  # firewall do NixOS (que bloqueia todo inbound por padrão) impede que peers te
+  # conectem — matando o seeding e limitando os peers no download. Como o
+  # container usa --network=host, abrir no host já basta (não há NAT do Docker).
+  #   TCP torrentPort  → wire protocol (conexões de peer)
+  #   UDP torrentPort  → µTP (transporte de peer sobre UDP)
+  #   UDP dhtPort      → DHT (descoberta de peers sem tracker)
+  networking.firewall.allowedTCPPorts = [ torrentPort ];
+  networking.firewall.allowedUDPPorts = [ torrentPort dhtPort ];
 
   # Wrapper `torlnk` no PATH do sistema (substitui o binário nativo).
   environment.systemPackages = [ torlnkLauncher ];
