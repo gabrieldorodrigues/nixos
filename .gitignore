@@ -21,3 +21,6 @@ secrets/
 # Listas IPTV (geradas localmente, não versionar)
 *.m3u
 *.m3u8
+
+# Config do editor (VS Code) — específica da máquina, não versionar
+.vscode/
