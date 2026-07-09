@@ -46,6 +46,7 @@ in
       localsend
       deluge
       proton-vpn-cli
+      lmstudio
 
       # Tema de ícones (usado pelo Walker e gerenciadores de arquivos).
       # Papirus com as pastas recoloridas para o accent do Catppuccin Mocha
