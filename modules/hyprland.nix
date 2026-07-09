@@ -275,6 +275,20 @@ in
     glib                # gsettings CLI (used to set the dark color-scheme)
     xdg-utils           # xdg-open and friends
     nautilus            # file manager
+    # Previews no Nautilus (a sessão Hyprland não traz nada disso por padrão):
+    #   - sushi: "Quick Look" estilo macOS. Selecione um arquivo e aperte ESPAÇO
+    #     para pré-visualizar — TOCA música/vídeo, mostra foto em tamanho real,
+    #     PDF, texto e fontes. Registra o serviço D-Bus
+    #     org.gnome.NautilusPreviewer (achado via XDG_DATA_DIRS/dbus-1/services e
+    #     ativado sob demanda pelo Nautilus) e traz seus próprios plugins
+    #     GStreamer no closure, então não depende de codecs do sistema.
+    #   - ffmpegthumbnailer: gera as MINIATURAS de vídeo na grade de ícones
+    #     (instala share/thumbnailers/ffmpegthumbnailer.thumbnailer, encontrado
+    #     via XDG_DATA_DIRS). Fotos já viram miniatura pelo gdk-pixbuf embutido.
+    #   - gnome-epub-thumbnailer: capas de EPUB/MOBI (você usa foliate/readest).
+    sushi
+    ffmpegthumbnailer
+    gnome-epub-thumbnailer
     gnome-online-accounts-gtk # GUI to add cloud accounts (Google Drive → Nautilus)
     tmux                # used by the Super+Alt+Return keybind
   ];
