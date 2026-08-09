@@ -19,6 +19,7 @@
       fastfetch
       cmatrix
       tailscale
+      superfile
       # btop is provided by Home Manager (home/programs/btop) so its config
       # (Catppuccin Mocha theme) is managed there.
       # torlink (torlnk) runs in a Docker container (modules/torlink.nix); the

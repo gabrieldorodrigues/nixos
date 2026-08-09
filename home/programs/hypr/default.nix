@@ -1,12 +1,53 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
+let
+  # Mesmo nixpkgs-unstable usado em modules/hyprland.nix para o compositor. Como
+  # é o MESMO input com a MESMA config, resolve para o MESMO store path, então o
+  # hyprglass abaixo é compilado contra exatamente o Hyprland que roda (ABI casa).
+  pkgsUnstable = import inputs.nixpkgs-unstable {
+    system = pkgs.stdenv.hostPlatform.system;
+    config.allowUnfree = true;
+  };
+
+  # hyprglass — plugin "Liquid Glass" (blur/refração/vidro em janelas e layers).
+  # Compilado da fonte via mkHyprlandPlugin do unstable (usa o stdenv do Hyprland
+  # e injeta pkg-config + as buildInputs do compositor: pixman, libdrm etc.).
+  # O Makefile do upstream não tem target `install`, então copiamos o .so à mão.
+  hyprglass = pkgsUnstable.hyprlandPlugins.mkHyprlandPlugin {
+    pluginName = "hyprglass";
+    version = "0.7.0";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "hyprnux";
+      repo = "hyprglass";
+      tag = "v0.7.0";
+      hash = "sha256-x/584kY+XXlU/OWKtZAFo89VtowjLXs1DiP9PC0o0Os=";
+    };
+
+    dontUseCmakeConfigure = true;
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/lib
+      cp hyprglass.so $out/lib/libhyprglass.so
+      runHook postInstall
+    '';
+
+    meta = {
+      description = "Liquid Glass inspired plugin for Hyprland";
+      homepage = "https://github.com/hyprnux/hyprglass";
+      license = lib.licenses.bsd3;
+      platforms = lib.platforms.linux;
+    };
+  };
+in
 {
   # Hyprland configs are deployed to ~/.config/hypr by Home Manager.
   # The compositor itself is enabled at system level (modules/hyprland.nix).
   xdg.configFile = {
     "hypr/hyprland.lua".text = ''
       -- #######################################################################
-      --  Hyprland configuration (Lua, Hyprland 0.55+)
+      --  Hyprland configuration (Lua, Hyprland 0.56+)
       --  Docs: https://wiki.hypr.land/Configuring/
       --  This file is symlinked from the NixOS repo (managed by modules/hyprland.nix)
       -- #######################################################################
@@ -15,7 +56,7 @@
       ---- MONITORS ----
       ------------------
       -- Primary monitor at 1080p @ 144Hz; other monitors auto-detected.
-      hl.monitor({ output = "DP-3", mode = "1920x1080@144", position = "0x0", scale = 1 })
+      hl.monitor({ output = "DP-1", mode = "1920x1080@144", position = "0x0", scale = 1 })
       hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
 
       --------------------
@@ -25,6 +66,29 @@
       local fileManager = "nautilus"
       local menu        = "walker"
       local browser     = "firefox"
+
+      -----------------
+      ---- PLUGINS ----
+      -----------------
+      -- hyprglass: efeito "Liquid Glass" nas janelas (inclui o terminal). O .so é
+      -- compilado no Nix (ver o topo deste arquivo) contra o Hyprland em uso.
+      -- hl.plugin.load só REGISTRA o plugin; após ele carregar, o Hyprland recarrega
+      -- o config e `hl.plugin.hyprglass` fica disponível — por isso o guard abaixo.
+      hl.plugin.load("${hyprglass}/lib/libhyprglass.so")
+
+      if hl.plugin.hyprglass then
+          local hg = hl.plugin.hyprglass
+          hg.config({
+              -- Desliga o vidro globalmente e usa whitelist por janela: só as
+              -- janelas com a tag `hyprglass_enabled` recebem o efeito. Assim
+              -- apenas o terminal (kitty) fica com o Liquid Glass.
+              enabled        = false,
+              default_theme  = "dark",
+              -- Preset built-in "glass": bloco de vidro sólido com bastante
+              -- aberração cromática.
+              default_preset = "glass",
+          })
+      end
 
       -------------------
       ---- AUTOSTART ----
@@ -94,6 +158,9 @@
 
           decoration = {
               rounding         = 10,
+              -- Opacidade global mantida em 1.0: o glass é aplicado APENAS ao
+              -- terminal (ver window_rule do kitty mais abaixo). A transparência
+              -- necessária para o efeito aparecer é dada só à janela do kitty.
               active_opacity   = 1.0,
               inactive_opacity = 1.0,
               -- Dim the rest of the screen while the scratchpad (Super+S) is open.
@@ -297,6 +364,14 @@
       hl.window_rule({ match = { class = "^(pavucontrol)$" }, float = true })
       hl.window_rule({ match = { class = "^(nm-connection-editor)$" }, float = true })
       hl.window_rule({ match = { title = "^(Open File)$" }, float = true })
+
+      -- Liquid Glass SÓ no terminal: liga o hyprglass nessa janela (whitelist,
+      -- já que o efeito está desligado globalmente) e dá a ela transparência,
+      -- necessária para o vidro (desenhado atrás da janela) ficar visível.
+      hl.window_rule({ match = { class = "^(kitty)$" }, tag = "+hyprglass_enabled" })
+      -- Opacidade da janela em 1.0: a transparência vem do `background_opacity`
+      -- do próprio kitty (só o fundo), mantendo o texto nítido e o roxo discreto.
+      hl.window_rule({ match = { class = "^(kitty)$" }, opacity = "1.0 1.0" })
     '';
     "hypr/hyprlock.conf".text = ''
       # Hyprlock - screen locker (https://wiki.hyprland.org/Hypr-Ecosystem/hyprlock/)

@@ -33,6 +33,7 @@ in
       foliate
       readest
       drawing
+      spacedrive
 
       # Navegador / comunicação.
       zen-browser
@@ -45,7 +46,6 @@ in
       bitwarden-desktop
       localsend
       deluge
-      proton-vpn-cli
       lmstudio
 
       # Tema de ícones (usado pelo Walker e gerenciadores de arquivos).

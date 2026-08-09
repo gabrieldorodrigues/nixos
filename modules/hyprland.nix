@@ -1,9 +1,18 @@
 # Hyprland (Wayland) + Waybar + Walker desktop setup.
 # KDE Plasma is kept as an alternative session (see modules/desktop.nix);
 # pick the session on the SDDM login screen.
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 let
+  # Hyprland vem do nixpkgs-unstable (0.56.x). O canal 26.05 trava em 0.55.4,
+  # que é velho demais para o plugin hyprglass (exige a ABI de 0.56). Puxamos só
+  # o compositor + portal do unstable; o resto do sistema segue no 26.05. O
+  # MESMO pkgs-unstable é usado para compilar o hyprglass (ver home/programs/hypr),
+  # então a ABI casa (o compositor e o plugin saem do mesmo nixpkgs).
+  pkgsUnstable = import inputs.nixpkgs-unstable {
+    system = pkgs.stdenv.hostPlatform.system;
+    config.allowUnfree = true;
+  };
   # Real, editable location of the wallpapers, versioned in this repo. We point
   # the ~/Pictures/wallpaper symlink (below) at THIS path instead of a copy in
   # the read-only nix store, so wallpapers can be added / removed / edited in
@@ -144,6 +153,9 @@ in
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
+    # Compositor + portal do unstable (0.56.x), casando com o plugin hyprglass.
+    package = pkgsUnstable.hyprland;
+    portalPackage = pkgsUnstable.xdg-desktop-portal-hyprland;
   };
 
   # Helpful environment for Wayland/Hyprland sessions.

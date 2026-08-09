@@ -14,6 +14,7 @@
       ../../modules/networking.nix
       ../../modules/locale.nix
       ../../modules/desktop.nix
+      ../../modules/nvidia.nix
       ../../modules/hyprland.nix
       ../../modules/sound.nix
       ../../modules/users.nix

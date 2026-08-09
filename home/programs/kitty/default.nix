@@ -20,6 +20,13 @@
       cursor_shape = "beam";
       scrollback_lines = 10000;
 
+      # --- transparência p/ o hyprglass ---
+      # Só o FUNDO fica translúcido (o texto continua 100% opaco/nítido), então
+      # o efeito Liquid Glass do Hyprland aparece atrás sem o roxo do Catppuccin
+      # "cobrir" o vidro. A opacidade da janela no Hyprland fica em 1.0.
+      background_opacity = "0.75";
+      dynamic_background_opacity = true;
+
       # --- animations (kitty 0.36+/0.40+) ---
       # cursor_trail draws a smooth "comet" trail that chases the cursor to its
       # new spot, making big jumps easy to follow. The decay pair is the

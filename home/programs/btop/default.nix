@@ -1,6 +1,21 @@
-{ ... }:
+{ pkgs, ... }:
 
 let
+  # btop lê a GPU NVIDIA via NVML, que ele carrega em runtime com
+  # dlopen("libnvidia-ml.so"). No NixOS essa lib mora em /run/opengl-driver/lib,
+  # que NÃO está no runpath do binário do Nix — por isso o dlopen falha e a box
+  # da GPU não aparece, mesmo com o driver proprietário ativo e o nvidia-smi
+  # funcionando. Envolvemos o btop injetando esse diretório no LD_LIBRARY_PATH.
+  btopWithGpu = pkgs.symlinkJoin {
+    name = "btop-gpu";
+    paths = [ pkgs.btop ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/btop \
+        --prefix LD_LIBRARY_PATH : /run/opengl-driver/lib
+    '';
+  };
+
   # Official Catppuccin Mocha palette, matching the rest of the rice
   # (waybar / walker / kitty). Source: github.com/catppuccin/btop.
   catppuccinMocha = ''
@@ -94,10 +109,19 @@ in
   # lives in this folder (same pattern as kitty).
   programs.btop = {
     enable = true;
+    package = btopWithGpu;
     settings = {
       color_theme = "catppuccin_mocha";
       # Let the (already themed) terminal background show through.
       theme_background = false;
+      # --- GPU (NVIDIA RTX 2060) ---
+      # btop já é compilado com suporte a GPU (BTOP_GPU=ON) e lê a NVIDIA via
+      # NVML, que vem do driver proprietário (ver modules/nvidia.nix). Mostra a
+      # box da GPU embutida na box da CPU e no modo de preset abaixo.
+      show_gpu_info = "On";
+      gpu_mirror_graph = true;
+      # Presets: preset 0 mostra cpu(+gpu)/mem/net/proc; alterne com Shift+P.
+      presets = "cpu:1:default,proc:0:default cpu:0:default,mem:0:default,net:0:default gpu:0:default";
     };
   };
 
