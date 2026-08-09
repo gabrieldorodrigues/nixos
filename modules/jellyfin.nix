@@ -10,6 +10,10 @@ let
   jellyfinVersion = "10.11.11";
 
   mediaDir  = "/home/gabrieldorodrigues/Downloads/torlink";
+  # Biblioteca extra num HD externo. O caminho tem espaços; como passamos como
+  # elemento único da lista de volumes, o Docker recebe a string inteira sem
+  # quebrar. Dentro do container aparece em /media-hd (somente leitura).
+  filmsDir  = "/run/media/gabrieldorodrigues/HD Mobile/Films & Series";
   stateDir  = "/var/lib/jellyfin-docker";
   configDir = "${stateDir}/config";
   cacheDir  = "${stateDir}/cache";
@@ -270,6 +274,7 @@ in
         "${configDir}:/config"
         "${cacheDir}:/cache"
         "${mediaDir}:/media:ro" # biblioteca de mídia (somente leitura)
+        "${filmsDir}:/media-hd:ro" # HD externo: Films & Series (somente leitura)
       ];
       environment = {
         TZ = "America/Sao_Paulo";

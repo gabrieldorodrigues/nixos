@@ -24,3 +24,8 @@ secrets/
 
 # Config do editor (VS Code) — específica da máquina, não versionar
 .vscode/
+
+# Wallpapers — mantidos apenas localmente (não versionar). São expostos por
+# symlink absoluto (/etc/nixos/home/wallpapers → ~/Pictures/wallpaper) e não
+# entram na store do Nix, então ignorá-los não quebra o build.
+home/wallpapers/
