@@ -126,6 +126,8 @@ O shell já traz o atalho `update` para o mesmo comando:
 update
 ```
 
+Após um rebuild bem-sucedido, ele também reindexa o Walker e recarrega a Waybar.
+
 ## Atalhos
 
 Todos os atalhos de teclado do Hyprland estão documentados em

@@ -26,6 +26,7 @@
     delta          # diffs de git com syntax highlight
     neovim         # editor
     just           # runner de tarefas (Justfile)
+    claude-code    # Claude é um LLM (AI).
 
     # --- Build essentials (necessários p/ módulos nativos de Node/Python) ---
     gcc            # compilador C/C++

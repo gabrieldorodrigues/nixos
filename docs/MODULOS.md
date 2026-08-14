@@ -52,7 +52,8 @@ Cria o usuário `gabrieldorodrigues` nos grupos `networkmanager`, `wheel` (sudo)
 
 Configura o **fish** como shell interativo principal e o **zsh** como alternativa,
 com o prompt **Tide**. Define o wrapper `update`, que roda
-`nixos-rebuild switch --flake /etc/nixos#nixos` e, no sucesso, reindexa o Walker.
+`nixos-rebuild switch --flake /etc/nixos#nixos` e, no sucesso, reindexa o Walker
+e recarrega a Waybar.
 Argumentos extras são repassados ao `nixos-rebuild`.
 
 ### `packages.nix`

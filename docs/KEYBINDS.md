@@ -59,6 +59,8 @@ Modificador principal (`mainMod`): **Super** (tecla Windows).
 | `Super + Shift + N`       | Bitwarden                                       |
 | `Super + Shift + I`       | opencode (kitty + IA)                           |
 | `Super + Shift + D`       | Docker (kitty + lazydocker)                     |
+| `Super + Shift + G`       | DNS (kitty + menu Cloudflare)                   |
+| `Super + Shift + V`       | ProtonVPN (kitty + menu WireGuard)              |
 | `Super + Shift + T`       | Torrents (kitty + torlnk)                       |
 | `Super + Shift + O`       | Obsidian                                        |
 | `Super + Shift + P`       | Leitor (readest)                                |
@@ -110,4 +112,4 @@ Modificador principal (`mainMod`): **Super** (tecla Windows).
 ## Regras de janela
 
 - Suprime o evento de maximizar em todas as janelas.
-- Flutuam: `pavucontrol`, `nm-connection-editor`, diálogos "Open File".
+- Flutuam: `pavucontrol`, `nm-connection-editor`, diálogos "Open File", o menu DNS (`waybar-dns-menu`) e o menu ProtonVPN (`waybar-vpn-menu`).

@@ -262,7 +262,10 @@ in
               kb_layout   = "br",
               kb_variant  = "",
               follow_mouse = 1,
-              sensitivity = 0.02,
+              -- sensitivity é um multiplicador de aceleração de -1.0 (mais lento)
+              -- a 1.0 (mais rápido); 0 = padrão. Valores perto de 0 quase não
+              -- mudam nada — por isso use negativo para de fato abaixar.
+              sensitivity = -0.5,
               touchpad = {
                   natural_scroll       = true,
                   disable_while_typing = true,
@@ -319,6 +322,8 @@ in
       hl.bind(mainMod .. " + SHIFT + I", hl.dsp.exec_cmd(terminal .. " -e opencode"), { description = "opencode (AI)" })
       hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd(terminal .. " -e lazydocker"), { description = "Docker" })
       hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd(terminal .. " -e btop"), { description = "System monitor (btop)" })
+      hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd(terminal .. " --title waybar-dns-menu -e ~/.config/waybar/dns.sh menu"), { description = "DNS menu (Cloudflare)" })
+      hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd(terminal .. " --title waybar-vpn-menu -e ~/.config/waybar/vpn.sh menu"), { description = "ProtonVPN menu" })
       hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd(terminal .. " -e torlnk"), { description = "Torlink (torrents)" })
       hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("obsidian"), { description = "Obsidian" })
       hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("readest"), { description = "Reader" })
@@ -403,6 +408,8 @@ in
       hl.window_rule({ match = { class = "^(pavucontrol)$" }, float = true })
       hl.window_rule({ match = { class = "^(nm-connection-editor)$" }, float = true })
       hl.window_rule({ match = { title = "^(Open File)$" }, float = true })
+      hl.window_rule({ match = { title = "^(waybar-dns-menu)$" }, float = true })
+      hl.window_rule({ match = { title = "^(waybar-vpn-menu)$" }, float = true })
 
       -- Liquid Glass SÓ no terminal: liga o hyprglass nessa janela (whitelist,
       -- já que o efeito está desligado globalmente) e dá a ela transparência,

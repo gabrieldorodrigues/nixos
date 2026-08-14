@@ -50,4 +50,24 @@
   # /var/run/tailscale/tailscaled.sock que a CLI `tailscale` usa). Sem isto o
   # pacote `tailscale` só instala a CLI, mas não há daemon para conectar.
   services.tailscale.enable = true;
+
+  # ProtonVPN via WireGuard: a TUI da Waybar (home/programs/waybar/vpn.sh) sobe/
+  # derruba o túnel com `wg-quick`, que exige root. Instala o wireguard-tools
+  # (fornece `wg` e `wg-quick`) e libera SOMENTE o `wg-quick` via sudo sem senha
+  # para o grupo wheel — assim o toggle/menu da barra não pede senha. O caminho
+  # no store é o mesmo referenciado pelo script (mesmo nixpkgs), então o match do
+  # sudoers é exato. Os perfis .conf ficam em ~/.config/protonvpn/wg (baixados no
+  # painel da Proton). Regra restrita a um único binário → superfície mínima.
+  environment.systemPackages = [ pkgs.wireguard-tools ];
+  security.sudo.extraRules = [
+    {
+      groups = [ "wheel" ];
+      commands = [
+        {
+          command = "${pkgs.wireguard-tools}/bin/wg-quick";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
 }

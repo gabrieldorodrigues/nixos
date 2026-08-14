@@ -236,6 +236,17 @@ in
         return polkit.Result.YES;
       }
     });
+
+    // Toggle de DNS na Waybar (home/programs/waybar/dns.sh): o `resolvectl`
+    // configura DNS/DoT por-link via systemd-resolved (org.freedesktop.resolve1)
+    // e revert do override. Sem esta regra, cada clique abriria um diálogo de
+    // senha do polkit. Liberado para o grupo wheel (dono single-user com sudo).
+    polkit.addRule(function(action, subject) {
+      if (action.id.indexOf("org.freedesktop.resolve1.") == 0 &&
+          subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+      }
+    });
   '';
 
   # GNOME Online Accounts (GOA). Enables the goa-daemon + D-Bus service that
