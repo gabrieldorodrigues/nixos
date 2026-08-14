@@ -45,6 +45,41 @@ in
   # Hyprland configs are deployed to ~/.config/hypr by Home Manager.
   # The compositor itself is enabled at system level (modules/hyprland.nix).
   xdg.configFile = {
+    # Screen shader que arredonda os CANTOS DO MONITOR (não das janelas). O
+    # decoration.rounding do Hyprland só afeta janelas; para dar o mesmo look de
+    # borda arredondada na tela toda usamos este fragment shader aplicado via
+    # decoration.screen_shader (ver hl.config lá embaixo). O raio (ROUNDING) casa
+    # com o rounding = 10 das janelas.
+    "hypr/shaders/rounded-corners.frag".text = ''
+      #version 300 es
+      precision highp float;
+
+      in vec2 v_texcoord;
+      uniform sampler2D tex;
+      out vec4 fragColor;
+
+      // Raio dos cantos do monitor em pixels. Um pouco maior que o rounding
+      // das janelas (10px) para dar um arredondamento mais visível na tela.
+      const float ROUNDING = 20.0;
+      // Resolução do monitor primário (DP-1: 1920x1080). Ajuste se mudar de tela.
+      const vec2 RESOLUTION = vec2(1920.0, 1080.0);
+
+      void main() {
+          vec4 color = texture(tex, v_texcoord);
+          // Posição do pixel dentro do retângulo da tela, em pixels.
+          vec2 pixel = v_texcoord * RESOLUTION;
+          // Distância até o canto mais próximo, "empurrada" para dentro pelo raio.
+          vec2 corner = min(pixel, RESOLUTION - pixel);
+          vec2 fromCenter = ROUNDING - corner;
+          // Só interessa quando estamos dentro da zona do quarto-de-círculo.
+          fromCenter = max(fromCenter, vec2(0.0));
+          float dist = length(fromCenter);
+          // Antialiasing de 1px na borda do arredondamento.
+          float alpha = 1.0 - smoothstep(ROUNDING - 1.0, ROUNDING + 1.0, dist);
+          fragColor = color * alpha;
+      }
+    '';
+
     "hypr/hyprland.lua".text = ''
       -- #######################################################################
       --  Hyprland configuration (Lua, Hyprland 0.56+)
@@ -158,6 +193,10 @@ in
 
           decoration = {
               rounding         = 10,
+              -- Arredonda os cantos do MONITOR inteiro (não só das janelas) com o
+              -- mesmo raio (10px) via screen shader. O arquivo .frag é gerado pelo
+              -- xdg.configFile lá no topo deste módulo.
+              screen_shader    = "${config.xdg.configHome}/hypr/shaders/rounded-corners.frag",
               -- Opacidade global mantida em 1.0: o glass é aplicado APENAS ao
               -- terminal (ver window_rule do kitty mais abaixo). A transparência
               -- necessária para o efeito aparecer é dada só à janela do kitty.
@@ -223,7 +262,7 @@ in
               kb_layout   = "br",
               kb_variant  = "",
               follow_mouse = 1,
-              sensitivity = 0.5,
+              sensitivity = 0.02,
               touchpad = {
                   natural_scroll       = true,
                   disable_while_typing = true,

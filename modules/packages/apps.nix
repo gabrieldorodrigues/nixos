@@ -47,6 +47,7 @@ in
       localsend
       deluge
       lmstudio
+      jetbrains.idea
 
       # Tema de ícones (usado pelo Walker e gerenciadores de arquivos).
       # Papirus com as pastas recoloridas para o accent do Catppuccin Mocha
