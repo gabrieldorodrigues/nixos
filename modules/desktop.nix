@@ -1,14 +1,23 @@
-# X11, KDE Plasma desktop, display manager and keymaps.
-{ config, pkgs, ... }:
+# X11 base, display manager (greetd + dms-greeter) e keymaps.
+# O ambiente principal é o Hyprland (Wayland) — ver modules/hyprland.nix.
+{ config, pkgs, inputs, ... }:
 
 {
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
+  imports = [ inputs.dank-greeter.nixosModules.default ];
+
+  # Servidor X mínimo. Mantido para apps X11 via XWayland; o Hyprland roda em
+  # Wayland por cima. (O KDE Plasma foi removido.)
   services.xserver.enable = true;
 
-  # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
+  # Login pelo dms-greeter (greetd), com a mesma estética do DMS. Substitui o
+  # SDDM. O greeter roda dentro do Hyprland e sincroniza tema/wallpaper/settings
+  # do DMS do usuário (via configHome). A sessão Hyprland é registrada por
+  # programs.hyprland em modules/hyprland.nix.
+  programs.dms-greeter = {
+    enable = true;
+    compositor.name = "hyprland";
+    configHome = "/home/gabrieldorodrigues";
+  };
 
   # Configure keymap in X11
   services.xserver.xkb = {

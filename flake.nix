@@ -19,6 +19,21 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # DankMaterialShell (DMS) — shell/desktop completo p/ Wayland (Quickshell +
+    # Go). Substitui waybar/mako/walker. Canal stable casa com o nixos-26.05.
+    dms = {
+      url = "github:AvengeMedia/DankMaterialShell/stable";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # dank-greeter (dms-greeter) — tela de login greetd com a estética do DMS.
+    # O greeter saiu do repo do DMS e virou pacote/flake próprio. Substitui o
+    # SDDM: o greetd sobe o dms-greeter, que sincroniza tema/wallpaper do DMS.
+    dank-greeter = {
+      url = "github:AvengeMedia/dank-greeter";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # torlink (torlnk) — buscador de torrents no terminal.
     # O pacote é feito no unstable; como o default aqui é 26.05, seguimos nixpkgs.
     torlink = {

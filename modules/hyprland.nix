@@ -1,6 +1,5 @@
-# Hyprland (Wayland) + Waybar + Walker desktop setup.
-# KDE Plasma is kept as an alternative session (see modules/desktop.nix);
-# pick the session on the SDDM login screen.
+# Hyprland (Wayland) desktop setup.
+# Login pelo greetd + dms-greeter (ver modules/desktop.nix). O Hyprland é a única sessão gráfica.
 { config, pkgs, inputs, ... }:
 
 let
@@ -17,135 +16,10 @@ let
   # the ~/Pictures/wallpaper symlink (below) at THIS path instead of a copy in
   # the read-only nix store, so wallpapers can be added / removed / edited in
   # place (the folder is user-owned; /etc/nixos is the deploy path) and show up
-  # live in the picker with no rebuild.
+  # live in the DMS wallpaper picker with no rebuild. O DankMaterialShell lê os
+  # wallpapers direto desta pasta (ver home/programs/dms), então NÃO usamos mais
+  # daemon próprio (awww) nem scripts de troca — o DMS renderiza e cicla sozinho.
   wallpaperSource = "/etc/nixos/home/wallpapers";
-
-  # Runtime path apps read wallpapers from (the symlink created below).
-  wallpaperDir = "$HOME/Pictures/wallpaper";
-
-  # Default wallpaper applied at session start.
-  defaultWallpaper = "${wallpaperDir}/tyumap.webp";
-
-  # Start the wallpaper daemon and apply the default wallpaper. Run on session
-  # start (see hyprland.lua autostart). The `swww` package in this nixpkgs
-  # ships the `awww` fork, whose binaries are `awww` / `awww-daemon`.
-  wallpaperInit = pkgs.writeShellScriptBin "wallpaper-init" ''
-    export PATH=${pkgs.awww}/bin:$PATH
-    # Start the daemon if it isn't already running.
-    if ! awww query >/dev/null 2>&1; then
-      awww-daemon &
-      # Wait for the daemon to come up before setting an image.
-      for _ in $(seq 1 50); do
-        awww query >/dev/null 2>&1 && break
-        sleep 0.1
-      done
-    fi
-    awww img "${defaultWallpaper}" >/dev/null 2>&1 || true
-  '';
-
-  # Cycle to the next wallpaper in ${wallpaperDir} (sorted alphabetically),
-  # wrapping back to the first one. Bound to a key in hyprland.lua.
-  wallpaperCycle = pkgs.writeShellScriptBin "wallpaper-cycle" ''
-    export PATH=${pkgs.awww}/bin:${pkgs.coreutils}/bin:${pkgs.findutils}/bin:$PATH
-    dir="${wallpaperDir}"
-
-    # Make sure the daemon is up (e.g. first run after login).
-    if ! awww query >/dev/null 2>&1; then
-      awww-daemon &
-      for _ in $(seq 1 50); do
-        awww query >/dev/null 2>&1 && break
-        sleep 0.1
-      done
-    fi
-
-    # Collect supported image files, sorted for a stable order.
-    mapfile -t walls < <(find -L "$dir" -maxdepth 1 -type f \
-      \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \
-         -o -iname '*.webp' -o -iname '*.gif' \) | sort)
-    [ "''${#walls[@]}" -eq 0 ] && exit 0
-
-    # Find the wallpaper currently displayed (if any) to compute the next one.
-    # awww reports the canonical (symlink-resolved) path because
-    # ~/Pictures/wallpaper is a symlink, so canonicalize each candidate first.
-    current=$(awww query 2>/dev/null | sed -n 's/.*image: //p' | head -n1)
-    next=0
-    for i in "''${!walls[@]}"; do
-      if [ "$(readlink -f "''${walls[$i]}")" = "$current" ]; then
-        next=$(( (i + 1) % ''${#walls[@]} ))
-        break
-      fi
-    done
-
-    awww img "''${walls[$next]}" \
-      --transition-type fade --transition-fps 60 --transition-duration 1
-  '';
-
-  # Open the walker wallpaper picker: a thumbnail-only menu of the images in
-  # ${wallpaperDir}. The menu (entries + cached PNG thumbnails) is defined in
-  # ~/.config/elephant/menus/wallpapers.lua (see home/programs/walker) and
-  # applies the chosen wallpaper via awww. We activate walker directly on the
-  # menus:wallpapers provider so it works even on the first use after login
-  # (walker only subscribes to elephant's menu channel once it's activated).
-  wallpaperMenu = pkgs.writeShellScriptBin "wallpaper-menu" ''
-    export PATH=${pkgs.awww}/bin:${pkgs.walker}/bin:${pkgs.coreutils}/bin:$PATH
-
-    # Make sure the daemon is up (e.g. first run after login) so applying the
-    # selected wallpaper works immediately.
-    if ! awww query >/dev/null 2>&1; then
-      awww-daemon &
-      for _ in $(seq 1 50); do
-        awww query >/dev/null 2>&1 && break
-        sleep 0.1
-      done
-    fi
-
-    # Grid picker: --hideqa hides the quick-activation number hints; the
-    # --maxwidth/--maxheight widen this launch only (not the main launcher) so
-    # the three landscape thumbnails per row are large.
-    exec walker --provider menus:wallpapers --hideqa --maxwidth 900 --maxheight 700
-  '';
-
-  # Restart elephant (walker's data backend) so the launcher re-scans the XDG
-  # desktop dirs. elephant only indexes applications at startup, so after a
-  # `nixos-rebuild` that adds or removes apps it keeps serving the PREVIOUS
-  # generation's list until restarted — this is why newly installed apps do
-  # not show up in walker until the next login. The `update` alias runs this
-  # automatically after a successful rebuild (see modules/shell.nix).
-  reindexWalker = pkgs.writeShellScriptBin "reindex-walker" ''
-    export PATH=${pkgs.elephant}/bin:${pkgs.walker}/bin:${pkgs.procps}/bin:${pkgs.coreutils}/bin:${pkgs.util-linux}/bin:$PATH
-
-    # Only meaningful inside a running graphical session. When elephant is not
-    # running (e.g. an update over SSH or from a TTY) there is nothing stale to
-    # fix: the Hyprland autostart indexes the new generation at the next login.
-    if ! pgrep -f 'bin/elephant' >/dev/null 2>&1; then
-      echo "reindex-walker: elephant not running, nothing to do."
-      exit 0
-    fi
-
-    echo "reindex-walker: restarting elephant so the launcher sees new apps..."
-
-    # elephant/walker are wrapped by NixOS as .<name>-wrapped, whose kernel
-    # comm is truncated past 15 chars, so also match on the executable path.
-    pkill -9 -f 'bin/elephant' 2>/dev/null || true
-    pkill -9 -x elephant       2>/dev/null || true
-    pkill -9 -f 'bin/walker'   2>/dev/null || true
-    pkill -9 -x walker         2>/dev/null || true
-
-    # Drop the stale control socket so walker reconnects to the fresh one.
-    rm -f "''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/elephant/elephant.sock"
-
-    sleep 0.3
-
-    # Relaunch both from $HOME, fully detached from this shell. The working
-    # directory matters: apps launched from walker inherit its CWD, so starting
-    # it in a directory that later disappears (e.g. running `update` from a temp
-    # dir) would break sandboxed apps like Steam. $HOME is always valid.
-    cd "$HOME" || cd /
-    setsid -f elephant >/dev/null 2>&1
-    setsid -f walker --gapplication-service >/dev/null 2>&1
-
-    echo "reindex-walker: done."
-  '';
 in
 {
   # Enable the Hyprland compositor. This also wires up XWayland and the
@@ -237,7 +111,7 @@ in
       }
     });
 
-    // Toggle de DNS na Waybar (home/programs/waybar/dns.sh): o `resolvectl`
+    // Seletor de DNS (home/programs/dns/dns.sh, atalho Super+Shift+G): o `resolvectl`
     // configura DNS/DoT por-link via systemd-resolved (org.freedesktop.resolve1)
     // e revert do override. Sem esta regra, cada clique abriria um diálogo de
     // senha do polkit. Liberado para o grupo wheel (dono single-user com sudo).
@@ -262,36 +136,36 @@ in
   # credenciais nele falhavam com "The Secret Service daemon is neither running
   # nor activatable through D-Bus" (ex.: ProtonVPN, que nem inicializa o login
   # sem chaveiro). O gnome-keyring instala esse serviço D-Bus (ativável sob
-  # demanda) e o PAM abaixo o destrava no login do SDDM usando a senha da conta,
-  # evitando prompts (o Hyprland não tem um prompter gráfico por padrão).
+  # demanda) e o PAM abaixo o destrava no login do greetd usando a senha da
+  # conta, evitando prompts (o Hyprland não tem um prompter gráfico por padrão).
   services.gnome.gnome-keyring.enable = true;
-  security.pam.services.sddm.enableGnomeKeyring = true;
+  security.pam.services.greetd.enableGnomeKeyring = true;
 
-  # Packages for the Hyprland ecosystem (bar, launcher, utilities).
+  # DankSearch (dsearch) — daemon de indexação/busca de arquivos que alimenta a
+  # busca de arquivos/pastas do launcher do DMS. Módulo NixOS do nixpkgs 26.05;
+  # o serviço de usuário sobe junto com a sessão (default.target).
+  programs.dsearch = {
+    enable = true;
+    systemd.enable = true;
+  };
+
+
+  # Packages for the Hyprland ecosystem (utilities).
   environment.systemPackages = with pkgs; [
-    walker              # application launcher / menus (Wayland/GTK4)
-    elephant            # data backend for walker (providers: drun, calc, dmenu, symbols…)
-    awww                # wallpaper daemon (live switching, used for cycling)
-    wallpaperInit       # starts awww + applies the default wallpaper
-    wallpaperCycle      # cycles through ~/Pictures/wallpaper (Super+Shift+W)
-    wallpaperMenu       # walker wallpaper picker (Super+Ctrl+Space)
-    reindexWalker       # restart elephant so walker sees newly installed apps
-    hyprlock            # screen locker
-    hypridle            # idle daemon (auto-lock)
-    mako                # notification daemon
+    # Barra, launcher, notificações, lock/idle, clipboard e wallpaper agora são
+    # todos do DankMaterialShell (DMS): waybar, walker, elephant, awww, mako,
+    # cliphist, hyprlock e hypridle foram removidos — o DMS os substitui.
     libnotify           # notify-send + notification client lib
 
     grim                # screenshot capture
     slurp               # region selection (for screenshots)
     hyprpicker          # color picker (Super+Print)
     wl-clipboard        # wl-copy / wl-paste
-    cliphist            # clipboard history
 
     brightnessctl       # backlight control
     pamixer             # PulseAudio/Pipewire volume control
     playerctl           # media keys (play/pause/next)
     pavucontrol         # graphical audio mixer
-    networkmanagerapplet # nm-applet tray icon
 
     nwg-look            # GTK theme settings
     gnome-themes-extra  # provides the Adwaita-dark GTK theme
@@ -316,10 +190,11 @@ in
     tmux                # used by the Super+Alt+Return keybind
   ];
 
-  # App configs (hypr/walker/gtk/waybar) are managed by Home Manager. The
-  # wallpapers are exposed at ~/Pictures/wallpaper via a symlink to the real
-  # (editable, versioned) repo folder, so new wallpapers can be dropped in with
-  # no rebuild. `L+` replaces any pre-existing target on activation.
+  # App configs (hypr/gtk) are managed by Home Manager. The wallpapers
+  # are exposed at ~/Pictures/wallpaper via a symlink to the real (editable,
+  # versioned) repo folder, so new wallpapers can be dropped in with no rebuild
+  # and o DankMaterialShell os lista na hora. `L+` replaces any pre-existing
+  # target on activation.
   systemd.user.tmpfiles.rules = [
     "L+ %h/Pictures/wallpaper          - - - - ${wallpaperSource}"
   ];

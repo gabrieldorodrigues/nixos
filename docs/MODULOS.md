@@ -25,18 +25,20 @@ brasileiros de data, moeda e números.
 
 ### `desktop.nix`
 
-Camada X11 e ambiente alternativo. Habilita o servidor X, o **SDDM** como tela de
-login e o **KDE Plasma 6** como sessão reserva. Teclado no layout `br` (console
+Camada X11 base e display manager. Habilita o servidor X (para apps X11 via
+XWayland) e o **greetd + dms-greeter** como tela de login (mesma estética do
+DMS, importado de `inputs.dank-greeter`). Teclado no layout `br` (console
 `br-abnt2`) e impressão via CUPS.
 
 ### `hyprland.nix`
 
-O ambiente principal. Configura o compositor **Hyprland** (Wayland), a barra
-**Waybar**, o launcher **Walker** com o backend `elephant` e o daemon de
-wallpaper `awww`. Inclui o utilitário `reindex-walker`, usado pelo atalho
-`update` para atualizar o índice de apps do launcher após um rebuild. Os
-wallpapers ficam versionados em [home/wallpapers](../home/wallpapers) e são
-expostos por um symlink em `~/Pictures/wallpaper`.
+O ambiente principal. Configura o compositor **Hyprland** (Wayland). A barra de
+status, notificações, launcher, lock/idle, histórico de clipboard **e o wallpaper**
+são fornecidos pelo **DankMaterialShell (DMS)** (ver `home/programs/dms`), que
+substituiu Waybar/Walker/Mako/hyprlock/hypridle/cliphist e o antigo daemon de
+wallpaper `awww`. Os wallpapers ficam versionados em
+[home/wallpapers](../home/wallpapers) e são expostos por um symlink em
+`~/Pictures/wallpaper`, de onde o DMS os lê e cicla.
 
 ### `sound.nix`
 
@@ -52,8 +54,7 @@ Cria o usuário `gabrieldorodrigues` nos grupos `networkmanager`, `wheel` (sudo)
 
 Configura o **fish** como shell interativo principal e o **zsh** como alternativa,
 com o prompt **Tide**. Define o wrapper `update`, que roda
-`nixos-rebuild switch --flake /etc/nixos#nixos` e, no sucesso, reindexa o Walker
-e recarrega a Waybar.
+`nixos-rebuild switch --flake /etc/nixos#nixos`.
 Argumentos extras são repassados ao `nixos-rebuild`.
 
 ### `packages.nix`
@@ -109,27 +110,27 @@ Habilita os recursos experimentais `nix-command` e `flakes` no daemon Nix.
 Ficam em [home/programs/](../home/programs) e são importados por
 [home/home.nix](../home/home.nix).
 
-| Programa     | Papel                                                   |
-| ------------ | ------------------------------------------------------- |
-| `hypr/`      | regras, atalhos e autostart do Hyprland (config em Lua) |
-| `waybar/`    | barra de status                                         |
-| `walker/`    | launcher de apps e seletor de wallpaper em grade        |
-| `kitty/`     | terminal principal, com tema Catppuccin                 |
-| `mako/`      | daemon de notificações (timeout de 10s)                 |
-| `btop/`      | monitor de recursos no terminal                         |
-| `gtk/`       | tema GTK escuro, ícones Papirus                         |
-| `fastfetch/` | resumo do sistema no terminal                           |
-| `direnv.nix` | ambientes por diretório (`direnv` + `nix-direnv`)       |
-| `rclone/`    | sincronização com armazenamento remoto                  |
+| Programa     | Papel                                                                                                |
+| ------------ | ---------------------------------------------------------------------------------------------------- |
+| `hypr/`      | regras, atalhos e autostart do Hyprland (config em Lua)                                              |
+| `dms/`       | DankMaterialShell: barra, notificações, launcher, lock, clipboard, wallpaper (tema Catppuccin Mocha) |
+| `dns/`       | script do seletor de provedor de DNS (`dns.sh`), acionado por Super+Shift+G                          |
+| `kitty/`     | terminal principal, com tema Catppuccin                                                              |
+| `btop/`      | monitor de recursos no terminal                                                                      |
+| `gtk/`       | tema GTK escuro, ícones Papirus                                                                      |
+| `fastfetch/` | resumo do sistema no terminal                                                                        |
+| `direnv.nix` | ambientes por diretório (`direnv` + `nix-direnv`)                                                    |
+| `rclone/`    | sincronização com armazenamento remoto                                                               |
 
 ## Onde mexer para tarefas comuns
 
-| Quero...                        | Vá para                                                                      |
-| ------------------------------- | ---------------------------------------------------------------------------- |
-| Adicionar um pacote de terminal | [modules/packages/cli.nix](../modules/packages/cli.nix)                      |
-| Adicionar um app gráfico        | [modules/packages/apps.nix](../modules/packages/apps.nix)                    |
-| Mudar atalhos do Hyprland       | [home/programs/hypr](../home/programs/hypr)                                  |
-| Ajustar a barra                 | [home/programs/waybar](../home/programs/waybar)                              |
-| Trocar o tema do terminal       | [home/programs/kitty](../home/programs/kitty)                                |
-| Configurar o shell/prompt       | [modules/shell.nix](../modules/shell.nix)                                    |
-| Mexer no Jellyfin/Live TV       | [modules/jellyfin.nix](../modules/jellyfin.nix) e [JELLYFIN.md](JELLYFIN.md) |
+| Quero...                        | Vá para                                                                               |
+| ------------------------------- | ------------------------------------------------------------------------------------- |
+| Adicionar um pacote de terminal | [modules/packages/cli.nix](../modules/packages/cli.nix)                               |
+| Adicionar um app gráfico        | [modules/packages/apps.nix](../modules/packages/apps.nix)                             |
+| Mudar atalhos do Hyprland       | [home/programs/hypr](../home/programs/hypr)                                           |
+| Ajustar a barra / o shell (DMS) | [home/programs/dms](../home/programs/dms)                                             |
+| Mudar a paleta de cores (DMS)   | [home/programs/dms/catppuccin-mocha.json](../home/programs/dms/catppuccin-mocha.json) |
+| Trocar o tema do terminal       | [home/programs/kitty](../home/programs/kitty)                                         |
+| Configurar o shell/prompt       | [modules/shell.nix](../modules/shell.nix)                                             |
+| Mexer no Jellyfin/Live TV       | [modules/jellyfin.nix](../modules/jellyfin.nix) e [JELLYFIN.md](JELLYFIN.md)          |

@@ -3,7 +3,7 @@
 Atalhos definidos em [`home/programs/hypr/default.nix`](../home/programs/hypr/default.nix).
 Modificador principal (`mainMod`): **Super** (tecla Windows).
 
-**Apps padrão:** terminal = `kitty`, gerenciador de arquivos = `nautilus`, menu = `walker`, navegador = `firefox`
+**Apps padrão:** terminal = `kitty`, gerenciador de arquivos = `nautilus`, launcher = **DMS** (DankMaterialShell), navegador = `firefox`
 
 ---
 
@@ -15,7 +15,7 @@ Modificador principal (`mainMod`): **Super** (tecla Windows).
 | `Super + F`      | Alternar tela cheia              |
 | `Super + T`      | Alternar flutuante/tiling        |
 | `Super + P`      | Pseudo-tile (dwindle)            |
-| `Super + L`      | Bloquear tela (hyprlock)         |
+| `Super + L`      | Bloquear tela (DMS)              |
 | `Super + Delete` | Sair da sessão Hyprland (logout) |
 
 ## Foco e movimento
@@ -50,7 +50,7 @@ Modificador principal (`mainMod`): **Super** (tecla Windows).
 
 | Atalho                    | Ação                                            |
 | ------------------------- | ----------------------------------------------- |
-| `Super + Space`           | Lançador de apps (walker)                       |
+| `Super + Space`           | Lançador de apps (DMS spotlight)                |
 | `Super + Return`          | Terminal (kitty)                                |
 | `Super + Shift + F`       | Gerenciador de arquivos, nova janela (nautilus) |
 | `Super + Shift + B`       | Navegador (firefox)                             |
@@ -60,24 +60,22 @@ Modificador principal (`mainMod`): **Super** (tecla Windows).
 | `Super + Shift + I`       | opencode (kitty + IA)                           |
 | `Super + Shift + D`       | Docker (kitty + lazydocker)                     |
 | `Super + Shift + G`       | DNS (kitty + menu Cloudflare)                   |
-| `Super + Shift + V`       | ProtonVPN (kitty + menu WireGuard)              |
 | `Super + Shift + T`       | Torrents (kitty + torlnk)                       |
 | `Super + Shift + O`       | Obsidian                                        |
 | `Super + Shift + P`       | Leitor (readest)                                |
 
-## Clipboard e símbolos
+## Clipboard
 
-| Atalho             | Ação                                         |
-| ------------------ | -------------------------------------------- |
-| `Super + C`        | Histórico de clipboard (cliphist via walker) |
-| `Super + Ctrl + E` | Seletor de emoji/símbolos (walker)           |
+| Atalho      | Ação                         |
+| ----------- | ---------------------------- |
+| `Super + C` | Histórico de clipboard (DMS) |
 
 ## Wallpaper
 
-| Atalho                 | Ação                               |
-| ---------------------- | ---------------------------------- |
-| `Super + Ctrl + Space` | Seletor de wallpaper (menu walker) |
-| `Super + Shift + W`    | Próximo wallpaper (ciclar)         |
+| Atalho                 | Ação                                |
+| ---------------------- | ----------------------------------- |
+| `Super + Ctrl + Space` | Seletor de wallpaper (grade do DMS) |
+| `Super + Shift + W`    | Próximo wallpaper (ciclar)          |
 
 ## Screenshots e cores
 
@@ -112,4 +110,4 @@ Modificador principal (`mainMod`): **Super** (tecla Windows).
 ## Regras de janela
 
 - Suprime o evento de maximizar em todas as janelas.
-- Flutuam: `pavucontrol`, `nm-connection-editor`, diálogos "Open File", o menu DNS (`waybar-dns-menu`) e o menu ProtonVPN (`waybar-vpn-menu`).
+- Flutuam: `pavucontrol`, `nm-connection-editor`, diálogos "Open File" e o menu DNS (`dns-menu`).

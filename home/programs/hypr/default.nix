@@ -45,41 +45,6 @@ in
   # Hyprland configs are deployed to ~/.config/hypr by Home Manager.
   # The compositor itself is enabled at system level (modules/hyprland.nix).
   xdg.configFile = {
-    # Screen shader que arredonda os CANTOS DO MONITOR (não das janelas). O
-    # decoration.rounding do Hyprland só afeta janelas; para dar o mesmo look de
-    # borda arredondada na tela toda usamos este fragment shader aplicado via
-    # decoration.screen_shader (ver hl.config lá embaixo). O raio (ROUNDING) casa
-    # com o rounding = 10 das janelas.
-    "hypr/shaders/rounded-corners.frag".text = ''
-      #version 300 es
-      precision highp float;
-
-      in vec2 v_texcoord;
-      uniform sampler2D tex;
-      out vec4 fragColor;
-
-      // Raio dos cantos do monitor em pixels. Um pouco maior que o rounding
-      // das janelas (10px) para dar um arredondamento mais visível na tela.
-      const float ROUNDING = 20.0;
-      // Resolução do monitor primário (DP-1: 1920x1080). Ajuste se mudar de tela.
-      const vec2 RESOLUTION = vec2(1920.0, 1080.0);
-
-      void main() {
-          vec4 color = texture(tex, v_texcoord);
-          // Posição do pixel dentro do retângulo da tela, em pixels.
-          vec2 pixel = v_texcoord * RESOLUTION;
-          // Distância até o canto mais próximo, "empurrada" para dentro pelo raio.
-          vec2 corner = min(pixel, RESOLUTION - pixel);
-          vec2 fromCenter = ROUNDING - corner;
-          // Só interessa quando estamos dentro da zona do quarto-de-círculo.
-          fromCenter = max(fromCenter, vec2(0.0));
-          float dist = length(fromCenter);
-          // Antialiasing de 1px na borda do arredondamento.
-          float alpha = 1.0 - smoothstep(ROUNDING - 1.0, ROUNDING + 1.0, dist);
-          fragColor = color * alpha;
-      }
-    '';
-
     "hypr/hyprland.lua".text = ''
       -- #######################################################################
       --  Hyprland configuration (Lua, Hyprland 0.56+)
@@ -99,7 +64,6 @@ in
       --------------------
       local terminal    = "kitty"
       local fileManager = "nautilus"
-      local menu        = "walker"
       local browser     = "firefox"
 
       -----------------
@@ -129,27 +93,27 @@ in
       ---- AUTOSTART ----
       -------------------
       hl.on("hyprland.start", function()
-          hl.exec_cmd("waybar")
-          hl.exec_cmd("wallpaper-init")
-          hl.exec_cmd("mako")
-          hl.exec_cmd("hypridle")
+          -- Exporta o ambiente para o systemd --user e sobe o alvo da sessão.
+          -- O dms.service é amarrado a este target (ver home/programs/dms), então
+          -- o DankMaterialShell (barra/notificações/launcher/lock/clipboard) sobe
+          -- só dentro do Hyprland.
+          hl.exec_cmd("dbus-update-activation-environment --systemd --all")
+          hl.exec_cmd("systemctl --user start hyprland-session.target")
           -- Agente de autenticação polkit (diálogos de senha p/ montar discos no
           -- Nautilus etc.). O unit vem de modules/hyprland.nix (systemd.packages);
           -- WAYLAND_DISPLAY já está no systemd --user, então o start funciona
           -- mesmo sem graphical-session.target (esta sessão não usa UWSM).
           hl.exec_cmd("systemctl --user start hyprpolkitagent.service")
-          hl.exec_cmd("nm-applet --indicator")
-          -- Walker launcher backend + service (started before it's ever invoked)
-          hl.exec_cmd("elephant")
-          hl.exec_cmd("walker --gapplication-service")
-          hl.exec_cmd("wl-paste --type text  --watch cliphist store")
-          hl.exec_cmd("wl-paste --type image --watch cliphist store")
           -- Apply the dark color-scheme so GTK/libadwaita apps render in dark mode.
           -- Use the real "Adwaita" theme (there is no GTK4 "Adwaita-dark"); dark
           -- comes from color-scheme=prefer-dark. Naming Adwaita-dark breaks the
           -- Nautilus sidebar/dialogs under GTK4/libadwaita.
           hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme prefer-dark")
           hl.exec_cmd("gsettings set org.gnome.desktop.interface gtk-theme Adwaita")
+          -- Icon theme (Papirus-Dark, recolorido p/ Catppuccin Mocha). Apps
+          -- GTK4/libadwaita como o Nautilus leem os ícones do gsettings, não do
+          -- gtk-4.0/settings.ini; sem isto caem no Adwaita e "perdem" o tema.
+          hl.exec_cmd("gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark")
           -- Pin the UI fonts to the GNOME defaults. A leftover config had bumped
           -- these to "Source Sans Pro 13" / "Maple Mono NF 13", which enlarged the
           -- GTK chrome of apps like Firefox (bigger toolbar/buttons; web content
@@ -193,10 +157,6 @@ in
 
           decoration = {
               rounding         = 10,
-              -- Arredonda os cantos do MONITOR inteiro (não só das janelas) com o
-              -- mesmo raio (10px) via screen shader. O arquivo .frag é gerado pelo
-              -- xdg.configFile lá no topo deste módulo.
-              screen_shader    = "${config.xdg.configHome}/hypr/shaders/rounded-corners.frag",
               -- Opacidade global mantida em 1.0: o glass é aplicado APENAS ao
               -- terminal (ver window_rule do kitty mais abaixo). A transparência
               -- necessária para o efeito aparecer é dada só à janela do kitty.
@@ -285,26 +245,24 @@ in
       -- Window management
       hl.bind(mainMod .. " + W", hl.dsp.window.close(), { description = "Close focused window" })
       -- Log out. hl.dsp.exit() only tells the compositor to quit; without a
-      -- session manager (UWSM) that does NOT reliably drop back to the SDDM
+      -- session manager (UWSM) that does NOT reliably drop back to the greetd
       -- greeter. Terminating the systemd login session directly does, and is
       -- independent of Hyprland's exit path. $XDG_SESSION_ID is inherited from
       -- the session Hyprland was started in; the command runs via /bin/sh.
       hl.bind(mainMod .. " + Delete", hl.dsp.exec_cmd("loginctl terminate-session $XDG_SESSION_ID"), { description = "Log out of the Hyprland session" })
       hl.bind(mainMod .. " + T", hl.dsp.window.float({ action = "toggle" }), { description = "Toggle tiling/floating" })
-      -- Walker runs as a single persistent service, so the wallpaper picker's
-      -- larger window size (it launches with --maxheight/--maxwidth) would carry
-      -- over to this launcher. Re-assert the default size here so the app
-      -- launcher always opens compact.
-      hl.bind(mainMod .. " + space", hl.dsp.exec_cmd(menu .. " --maxheight 400 --maxwidth 500"))
+      -- App launcher agora é o spotlight do DMS (substitui o walker).
+      hl.bind(mainMod .. " + space", hl.dsp.exec_cmd("dms ipc call spotlight toggle"))
       hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
       hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }))
-      hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
+      -- Lock via DMS (substitui hyprlock/hypridle).
+      hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("dms ipc call lock lock"))
 
-      -- Cycle through the wallpapers in ~/Pictures/wallpaper
-      hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("wallpaper-cycle"), { description = "Next wallpaper" })
+      -- Cycle to the next wallpaper in ~/Pictures/wallpaper (DMS built-in).
+      hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("dms ipc call wallpaper next"), { description = "Next wallpaper" })
 
-      -- Pick a wallpaper from a walker menu
-      hl.bind(mainMod .. " + CTRL + space", hl.dsp.exec_cmd("wallpaper-menu"), { description = "Wallpaper picker" })
+      -- Open the DankMaterialShell wallpaper picker (grid of ~/Pictures/wallpaper).
+      hl.bind(mainMod .. " + CTRL + space", hl.dsp.exec_cmd("dms ipc call dankdash wallpaper"), { description = "Wallpaper picker" })
 
       -- Main use cases
       hl.bind(mainMod .. " + Q", hl.dsp.focus({ workspace = "previous" }), { description = "Previous workspace" })
@@ -322,14 +280,13 @@ in
       hl.bind(mainMod .. " + SHIFT + I", hl.dsp.exec_cmd(terminal .. " -e opencode"), { description = "opencode (AI)" })
       hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd(terminal .. " -e lazydocker"), { description = "Docker" })
       hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd(terminal .. " -e btop"), { description = "System monitor (btop)" })
-      hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd(terminal .. " --title waybar-dns-menu -e ~/.config/waybar/dns.sh menu"), { description = "DNS menu (Cloudflare)" })
-      hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd(terminal .. " --title waybar-vpn-menu -e ~/.config/waybar/vpn.sh menu"), { description = "ProtonVPN menu" })
+      hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd(terminal .. " --title dns-menu -e ~/.config/dns/dns.sh menu"), { description = "DNS menu (Cloudflare)" })
       hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd(terminal .. " -e torlnk"), { description = "Torlink (torrents)" })
       hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("obsidian"), { description = "Obsidian" })
       hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("readest"), { description = "Reader" })
 
-      -- Clipboard history (via walker dmenu)
-      hl.bind(mainMod .. " + C", hl.dsp.exec_cmd([[cliphist list | walker --dmenu | cliphist decode | wl-copy]]))
+      -- Histórico de clipboard: gerenciador do DMS (substitui cliphist+walker).
+      hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("dms ipc call clipboard toggle"))
 
       -- Cycle through windows with Alt + Tab
       hl.bind("ALT + Tab", function()
@@ -375,9 +332,6 @@ in
       hl.bind(mainMod .. " + SHIFT + Print", hl.dsp.exec_cmd([[mkdir -p ~/Pictures/Screenshots && f=~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png && grim -g "$(slurp)" "$f" && wl-copy < "$f" && notify-send "Screenshot" "Região salva em $f"]]))
       hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd("hyprpicker -a"), { description = "Color picker" })
 
-      -- Emoji / symbol picker (walker symbols provider)
-      hl.bind(mainMod .. " + CTRL + E", hl.dsp.exec_cmd("walker -m symbols"))
-
       -- Media & hardware keys (work even when locked)
       hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("pamixer -i 5"), { locked = true, repeating = true })
       hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("pamixer -d 5"), { locked = true, repeating = true })
@@ -408,8 +362,7 @@ in
       hl.window_rule({ match = { class = "^(pavucontrol)$" }, float = true })
       hl.window_rule({ match = { class = "^(nm-connection-editor)$" }, float = true })
       hl.window_rule({ match = { title = "^(Open File)$" }, float = true })
-      hl.window_rule({ match = { title = "^(waybar-dns-menu)$" }, float = true })
-      hl.window_rule({ match = { title = "^(waybar-vpn-menu)$" }, float = true })
+      hl.window_rule({ match = { title = "^(dns-menu)$" }, float = true })
 
       -- Liquid Glass SÓ no terminal: liga o hyprglass nessa janela (whitelist,
       -- já que o efeito está desligado globalmente) e dá a ela transparência,

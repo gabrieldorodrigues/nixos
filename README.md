@@ -16,37 +16,35 @@ usuário e toda a configuração da área de trabalho. A ideia é simples: o sis
 inteiro é declarativo, versionado e recriável em qualquer instalação limpa do
 NixOS.
 
-O ambiente principal é o **Hyprland**, um compositor Wayland com tiling. O
-**KDE Plasma 6** fica disponível como sessão alternativa na tela de login.
+O ambiente principal (e único) é o **Hyprland**, um compositor Wayland com
+tiling, com o **DankMaterialShell (DMS)** provendo barra, notificações e launcher.
 
 ## Destaques
 
 - **Declarativo de ponta a ponta.** Sistema (`modules/`) e usuário (`home/`) num
   só flake, com entradas fixadas em `flake.lock`.
-- **Rice do Hyprland** configurado em Lua, com Waybar, launcher Walker e um
-  seletor de wallpapers em grade.
-- **Dois ambientes.** Hyprland (Wayland) como principal e KDE Plasma 6 como
-  reserva, escolhidos no SDDM.
+- **Rice do Hyprland** configurado em Lua, com o DankMaterialShell (barra,
+  notificações, launcher, lock e clipboard) e tema Catppuccin Mocha.
+- **Sessão única.** Hyprland (Wayland) pelo greetd + dms-greeter.
 - **Terminal e shell caprichados.** kitty com tema Catppuccin e fish com prompt
   Tide.
 - **Jellyfin declarativo** em Docker, com plugins, tema e Live TV já configurados.
-- **Wallpapers versionados** no próprio repositório, aplicados por daemon.
+- **Wallpapers versionados** no próprio repositório, aplicados pelo DMS.
 
 ## O ambiente
 
 | Camada        | Ferramenta                                           |
 | ------------- | ---------------------------------------------------- |
 | Compositor    | Hyprland (Wayland)                                   |
-| Barra         | Waybar                                               |
-| Launcher      | Walker + elephant                                    |
-| Notificações  | mako                                                 |
-| Bloqueio/idle | hyprlock + hypridle                                  |
-| Wallpaper     | awww (daemon) + seletor em grade no Walker           |
-| Clipboard     | cliphist                                             |
+| Shell desktop | DankMaterialShell (barra, notificações, launcher)    |
+| Bloqueio/idle | DankMaterialShell (lock/idle)                        |
+| Wallpaper     | DankMaterialShell (renderiza e cicla)                |
+| Clipboard     | DankMaterialShell                                    |
+| DNS           | seletor de provedor via fzf (Super+Shift+G)          |
 | Terminal      | kitty (principal) e alacritty                        |
 | Shell         | fish (padrão, prompt Tide) e zsh                     |
 | Tema          | Catppuccin Mocha, ícones Papirus, GTK em modo escuro |
-| Login         | SDDM (sessões Hyprland e KDE Plasma 6)               |
+| Login         | greetd + dms-greeter (sessão Hyprland)               |
 | Mídia         | Jellyfin em Docker (plugins, tema e Live TV)         |
 
 ## Estrutura do repositório
@@ -65,8 +63,8 @@ O ambiente principal é o **Hyprland**, um compositor Wayland com tiling. O
 │   └── nixos/             # configuração e hardware desta máquina
 ├── modules/               # módulos de sistema (NixOS)
 │   ├── boot.nix           # bootloader
-│   ├── desktop.nix        # X11, SDDM, KDE Plasma
-│   ├── hyprland.nix       # compositor, wallpaper, launcher
+│   ├── desktop.nix        # X11, greetd + dms-greeter
+│   ├── hyprland.nix       # compositor Hyprland
 │   ├── packages.nix       # importa packages/ e define apps padrão
 │   ├── packages/          # listas de pacotes por categoria
 │   │   ├── cli.nix
@@ -84,7 +82,7 @@ O ambiente principal é o **Hyprland**, um compositor Wayland com tiling. O
 │   └── nix-settings.nix
 └── home/                  # configuração de usuário (Home Manager)
     ├── home.nix
-    ├── programs/          # btop, gtk, hypr, kitty, mako, walker, waybar, etc.
+    ├── programs/          # btop, gtk, hypr, kitty, dms, dns, etc.
     └── wallpapers/        # wallpapers versionados
 ```
 
@@ -126,8 +124,6 @@ O shell já traz o atalho `update` para o mesmo comando:
 update
 ```
 
-Após um rebuild bem-sucedido, ele também reindexa o Walker e recarrega a Waybar.
-
 ## Atalhos
 
 Todos os atalhos de teclado do Hyprland estão documentados em
@@ -147,10 +143,10 @@ Alguns dos mais usados:
 
 - **Pacotes**: [modules/packages.nix](modules/packages.nix) e a pasta
   [modules/packages](modules/packages).
-- **Compositor e wallpaper**: [modules/hyprland.nix](modules/hyprland.nix) e
+- **Compositor**: [modules/hyprland.nix](modules/hyprland.nix) e
   [home/programs/hypr](home/programs/hypr).
-- **Barra**: [home/programs/waybar](home/programs/waybar).
-- **Launcher e seletor de wallpaper**: [home/programs/walker](home/programs/walker).
+- **Seletor de DNS**: [home/programs/dns](home/programs/dns).
+- **Launcher, notificações e wallpaper**: [home/programs/dms](home/programs/dms).
 - **Terminal**: [home/programs/kitty](home/programs/kitty).
 - **Shell e prompt**: [modules/shell.nix](modules/shell.nix).
 - **Jellyfin e Live TV**: [modules/jellyfin.nix](modules/jellyfin.nix), detalhado

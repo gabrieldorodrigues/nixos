@@ -65,8 +65,8 @@ Módulos de sistema, cada um cuidando de uma área. Veja a referência completa 
 Configuração de usuário via Home Manager.
 
 - **`home.nix`**: define `username`, `homeDirectory` e importa `programs/`.
-- **`programs/`**: um diretório ou arquivo por aplicativo (Hyprland, Waybar,
-  kitty, Walker, mako, btop, GTK, entre outros).
+- **`programs/`**: um diretório ou arquivo por aplicativo (Hyprland, DMS,
+  kitty, btop, GTK, entre outros; `dns` traz só o script do menu de DNS).
 - **`wallpapers/`**: imagens versionadas no repositório. O Hyprland aponta um
   symlink em `~/Pictures/wallpaper` para esta pasta, então dá para adicionar ou
   trocar wallpapers sem rebuild.

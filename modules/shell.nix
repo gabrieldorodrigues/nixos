@@ -2,22 +2,11 @@
 { config, pkgs, ... }:
 
 let
-  # `update` wrapper: rebuild the system from the flake, then reindex the
-  # walker launcher and reload Waybar so desktop changes appear without a
-  # re-login. Any extra arguments (e.g. --show-trace) are forwarded to
-  # nixos-rebuild. The post-steps only run on a successful rebuild and no-op
-  # outside a graphical session.
+  # `update` wrapper: rebuild the system from the flake. Any extra arguments
+  # (e.g. --show-trace) are forwarded to nixos-rebuild. Since the DMS migration
+  # there are no desktop helpers left to refresh (walker/elephant/waybar removed).
   nixosUpdate = pkgs.writeShellScriptBin "nixos-update" ''
     sudo nixos-rebuild switch --flake /etc/nixos#nixos "$@"
-    rc=$?
-    if [ "$rc" -eq 0 ]; then
-      reindex-walker || true
-      # On NixOS the running process is named ".waybar-wrapped", so match by the
-      # wrapped exe path. SIGUSR2 makes waybar reload its config + stylesheet in
-      # place (no flicker, same pid), picking up on-click/handler changes.
-      pkill -SIGUSR2 -f 'bin/\.waybar-wrapped' 2>/dev/null || true
-    fi
-    exit "$rc"
   '';
 in
 {
@@ -26,7 +15,7 @@ in
     enable = true;
 
     shellAliases = {
-      # `nixos-update` = rebuild + refresh desktop helpers (see the let block above).
+      # `nixos-update` = rebuild do sistema a partir do flake (ver o let acima).
       update = "nixos-update";
       ll = "ls -lah";
     };
@@ -71,7 +60,7 @@ in
 
   # Fish plugins (auto-loaded from vendor dirs by fish on NixOS).
   environment.systemPackages = with pkgs; [
-    nixosUpdate               # `update` wrapper: rebuild + refresh Waybar/Walker
+    nixosUpdate               # `update` wrapper: rebuild do sistema a partir do flake
     fishPlugins.tide          # prompt
     fishPlugins.fzf-fish      # fzf key bindings (Ctrl+R, Ctrl+T, etc.)
     fishPlugins.autopair      # auto-close brackets/quotes

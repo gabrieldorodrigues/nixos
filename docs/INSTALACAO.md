@@ -64,8 +64,7 @@ sudo nixos-rebuild switch --flake /etc/nixos#nixos
 ```
 
 A primeira build baixa e compila bastante coisa, então leva um tempo. Ao
-terminar, reinicie para entrar pelo SDDM e escolher a sessão **Hyprland** (ou
-**KDE Plasma 6** como alternativa).
+terminar, reinicie para entrar pelo dms-greeter na sessão **Hyprland**.
 
 ## 5. Definir a senha e conferir
 
@@ -85,7 +84,8 @@ update
 ```
 
 Ele é um envelope para o comando abaixo e, ao final de uma build bem-sucedida,
-reindexa o launcher Walker para que apps novos apareçam sem relogar:
+reindexa o backend do seletor de emoji/símbolos (elephant) para que dados novos
+apareçam sem relogar:
 
 ```bash
 sudo nixos-rebuild switch --flake /etc/nixos#nixos
