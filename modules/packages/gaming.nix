@@ -1,9 +1,17 @@
 # Jogos: Steam, emuladores e launchers.
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
+  # Overlay do Millennium (loader de temas/plugins do cliente Steam). Expõe o
+  # pacote `millennium-steam` usado abaixo como o pacote da Steam.
+  nixpkgs.overlays = [ inputs.millennium.overlays.default ];
+
   # Enable Steam (sets up 32-bit libs, firewall rules, etc.).
-  programs.steam.enable = true;
+  # `millennium-steam` = Steam empacotada com o Millennium embutido.
+  programs.steam = {
+    enable = true;
+    package = pkgs.millennium-steam;
+  };
 
   # Minecraft/Java em NixOS: o Modrinth baixa uma JRE Zulu genérica
   # (dinamicamente ligada) que espera /lib64/ld-linux-x86-64.so.2, ausente no

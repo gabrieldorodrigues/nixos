@@ -33,7 +33,6 @@ in
       foliate
       readest
       drawing
-      spacedrive
 
       # Navegador / comunicação.
       zen-browser

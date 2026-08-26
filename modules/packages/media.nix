@@ -1,5 +1,5 @@
 # Mídia: áudio, vídeo, imagem e gráficos.
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   environment.systemPackages =
@@ -16,8 +16,7 @@
       loupe
       inkscape
       upscayl
-    ]
-    ++ lib.optionals (pkgs.stdenv.hostPlatform.system == "x86_64-linux") [
-      spotify
     ];
+  # NB: o Spotify é instalado pelo spicetify-nix (ver home/programs/spotify),
+  # então NÃO adicionamos `pkgs.spotify` aqui para evitar conflito.
 }

@@ -33,13 +33,13 @@
   "showWeekNumber": false,
   "calendarBackend": "auto",
   "clockFormat": "auto",
-  "showSeconds": false,
+  "showSeconds": true,
   "padHours12Hour": false,
   "useFahrenheit": false,
   "windSpeedUnit": "kmh",
   "nightModeEnabled": false,
-  "animationSpeed": 1,
-  "customAnimationDuration": 500,
+  "animationSpeed": 4,
+  "customAnimationDuration": 160,
   "syncComponentAnimationSpeeds": true,
   "popoutAnimationSpeed": 1,
   "popoutCustomAnimationDuration": 150,
@@ -82,7 +82,7 @@
   "selectedGpuIndex": 0,
   "enabledGpuPciIds": [],
   "showSystemTray": true,
-  "systemTrayIconTintMode": "none",
+  "systemTrayIconTintMode": "monochrome",
   "systemTrayIconTintSaturation": 50,
   "systemTrayIconTintStrength": 135,
   "showClock": true,
@@ -116,43 +116,43 @@
   "privacyShowScreenShareIcon": false,
   "controlCenterWidgets": [
     {
+      "enabled": true,
       "id": "volumeSlider",
-      "enabled": true,
       "width": 50
     },
     {
+      "enabled": true,
       "id": "brightnessSlider",
-      "enabled": true,
       "width": 50
     },
     {
+      "enabled": true,
       "id": "wifi",
-      "enabled": true,
       "width": 50
     },
     {
+      "enabled": true,
       "id": "bluetooth",
-      "enabled": true,
       "width": 50
     },
     {
+      "enabled": true,
       "id": "audioOutput",
-      "enabled": true,
       "width": 50
     },
     {
+      "enabled": true,
       "id": "audioInput",
-      "enabled": true,
       "width": 50
     },
     {
+      "enabled": true,
       "id": "nightMode",
-      "enabled": true,
       "width": 50
     },
     {
-      "id": "darkMode",
       "enabled": true,
+      "id": "darkMode",
       "width": 50
     }
   ],
@@ -205,7 +205,7 @@
   "audioScrollMode": "volume",
   "audioWheelScrollAmount": 5,
   "audioDeviceScrollVolumeEnabled": false,
-  "mediaExcludePlayers": [],
+  "mediaExcludePlayers": ["firefox"],
   "clockCompactMode": false,
   "focusedWindowCompactMode": false,
   "focusedWindowSize": 1,
@@ -268,8 +268,10 @@
   "greeterFontFamily": "",
   "greeterWallpaperFillMode": "",
   "greeterPamExternallyManaged": false,
-  "greeterSyncPending": false,
-  "greeterSyncBaseline": {},
+  "greeterSyncPending": true,
+  "greeterSyncBaseline": {
+    "showSeconds": false
+  },
   "mediaSize": 1,
   "appLauncherViewMode": "list",
   "spotlightModalViewMode": "list",
@@ -286,7 +288,7 @@
   "appDrawerSectionViewModes": {},
   "niriOverviewOverlayEnabled": true,
   "niriOverviewLauncherStyle": "full",
-  "dankLauncherV2Size": "compact",
+  "dankLauncherV2Size": "micro",
   "dankLauncherV2ShowSourceBadges": true,
   "dankLauncherV2BorderEnabled": false,
   "dankLauncherV2BorderThickness": 2,
@@ -299,28 +301,28 @@
   "launcherStyle": "full",
   "spotlightBarShowModeChips": false,
   "keybindsFloatingWindow": false,
-  "useAutoLocation": false,
+  "useAutoLocation": true,
   "weatherEnabled": true,
   "dashTabs": [
     {
-      "id": "overview",
-      "enabled": true
+      "enabled": true,
+      "id": "overview"
     },
     {
-      "id": "media",
-      "enabled": true
+      "enabled": true,
+      "id": "media"
     },
     {
-      "id": "wallpaper",
-      "enabled": true
+      "enabled": true,
+      "id": "wallpaper"
     },
     {
-      "id": "weather",
-      "enabled": true
+      "enabled": true,
+      "id": "weather"
     },
     {
-      "id": "settings",
-      "enabled": true
+      "enabled": true,
+      "id": "settings"
     }
   ],
   "networkPreference": "auto",
@@ -329,23 +331,23 @@
   "iconThemePerMode": false,
   "lastAppliedIconTheme": "",
   "cursorSettings": {
-    "theme": "System Default",
-    "size": 24,
-    "niri": {
-      "hideWhenTyping": false,
-      "hideAfterInactiveMs": 0
+    "dwl": {
+      "cursorHideTimeout": 0
     },
     "hyprland": {
       "hideOnKeyPress": false,
       "hideOnTouch": false,
       "inactiveTimeout": 0
     },
-    "dwl": {
-      "cursorHideTimeout": 0
-    },
     "mango": {
       "cursorHideTimeout": 0
-    }
+    },
+    "niri": {
+      "hideAfterInactiveMs": 0,
+      "hideWhenTyping": false
+    },
+    "size": 24,
+    "theme": "System Default"
   },
   "launcherLogoMode": "os",
   "launcherLogoCustomPath": "",
@@ -356,7 +358,7 @@
   "launcherLogoSizeOffset": 0,
   "fontFamily": "Inter Variable",
   "monoFontFamily": "Fira Code",
-  "fontWeight": 400,
+  "fontWeight": 500,
   "fontScale": 1,
   "textRenderType": 0,
   "textRenderQuality": 0,
@@ -375,7 +377,7 @@
   "notepadEdgeGap": 0,
   "soundsEnabled": true,
   "useSystemSoundTheme": false,
-  "soundLogin": true,
+  "soundLogin": false,
   "soundNewNotification": true,
   "soundVolumeChanged": true,
   "soundPluggedIn": true,
@@ -518,7 +520,7 @@
   "notificationTimeoutLow": 5000,
   "notificationTimeoutNormal": 5000,
   "notificationTimeoutCritical": 0,
-  "notificationCompactMode": false,
+  "notificationCompactMode": true,
   "notificationShowTimeoutBar": false,
   "notificationDedupeEnabled": true,
   "notificationPopupPosition": 0,
@@ -590,14 +592,31 @@
   },
   "barConfigs": [
     {
-      "id": "default",
-      "name": "Main Bar",
-      "enabled": true,
-      "position": 0,
-      "screenPreferences": ["all"],
-      "showOnLastDisplay": true,
-      "leftWidgets": ["launcherButton", "workspaceSwitcher", "focusedWindow"],
+      "autoHide": false,
+      "autoHideDelay": 250,
+      "borderColor": "surfaceText",
+      "borderEnabled": false,
+      "borderOpacity": 1,
+      "borderThickness": 1,
+      "bottomGap": 0,
       "centerWidgets": ["music", "clock", "weather"],
+      "clickThrough": false,
+      "enabled": true,
+      "fontScale": 1,
+      "gothCornerRadiusOverride": false,
+      "gothCornerRadiusValue": 12,
+      "gothCornersEnabled": false,
+      "hoverPopouts": false,
+      "iconScale": 1,
+      "id": "default",
+      "innerPadding": 0,
+      "leftWidgets": ["launcherButton", "workspaceSwitcher", "focusedWindow"],
+      "name": "Main Bar",
+      "noBackground": false,
+      "openOnOverview": false,
+      "popupGapsAuto": true,
+      "popupGapsManual": 4,
+      "position": 0,
       "rightWidgets": [
         "systemTray",
         "clipboard",
@@ -607,31 +626,20 @@
         "battery",
         "controlCenterButton"
       ],
+      "screenPreferences": ["all"],
+      "showOnLastDisplay": true,
       "spacing": 4,
-      "innerPadding": 4,
-      "bottomGap": 0,
-      "transparency": 1,
-      "widgetTransparency": 0,
       "squareCorners": false,
-      "noBackground": false,
-      "gothCornersEnabled": false,
-      "gothCornerRadiusOverride": false,
-      "gothCornerRadiusValue": 12,
-      "borderEnabled": false,
-      "borderColor": "surfaceText",
-      "borderOpacity": 1,
-      "borderThickness": 1,
-      "fontScale": 1,
-      "autoHide": false,
-      "autoHideDelay": 250,
-      "openOnOverview": false,
+      "transparency": 1,
       "visible": true,
-      "popupGapsAuto": true,
-      "popupGapsManual": 4,
-      "iconScale": 1,
       "widgetOutlineEnabled": false,
-      "clickThrough": false,
-      "hoverPopouts": false
+      "widgetTransparency": 0,
+      "maximizeWidgetIcons": false,
+      "maximizeWidgetText": false,
+      "removeWidgetPadding": true,
+      "shadowIntensity": 0,
+      "barInsetPadding": 4,
+      "maximizeDetection": true
     }
   ],
   "desktopClockEnabled": false,
@@ -701,7 +709,14 @@
   "desktopWidgetGridSettings": {},
   "desktopWidgetInstances": [],
   "desktopWidgetGroups": [],
-  "builtInPluginSettings": {},
+  "builtInPluginSettings": {
+    "dms_settings_search": {
+      "trigger": "?"
+    },
+    "dms_clipboard_search": {
+      "trigger": "cb"
+    }
+  },
   "clipboardClickToPaste": false,
   "clipboardEnterToPaste": false,
   "clipboardRememberTypeFilter": false,
@@ -711,12 +726,12 @@
   "launcherPluginOrder": [],
   "frameEnabled": true,
   "frameThickness": 14,
-  "frameRounding": 14,
+  "frameRounding": 17,
   "frameColor": "",
   "frameOpacity": 1,
   "frameScreenPreferences": ["all"],
   "frameBarSize": 34,
-  "frameShowOnOverview": false,
+  "frameShowOnOverview": true,
   "frameBlurEnabled": true,
   "frameCloseGaps": true,
   "frameLauncherEmergeSide": "top",

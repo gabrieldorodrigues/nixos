@@ -259,10 +259,12 @@ let
 
       # 3. Extend the SourceId union so the new ids are valid (type-only; esbuild
       #    strips types, but keep it correct for the source of truth).
+      #    Âncora: o último id do union (mudou de "x1337-tv" para "bittorrented"
+      #    no upstream v1.4.1).
       substituteInPlace src/sources/types.ts \
         --replace-fail \
-          '  | "x1337-tv";' \
-          '  | "x1337-tv"
+          '  | "bittorrented";' \
+          '  | "bittorrented"
         | "rargb-movies"
         | "rargb-tv"
         | "rargb-games";'
@@ -273,13 +275,16 @@ let
       #    peers and seeding don't work. With a fixed, firewall-opened port,
       #    incoming connections (and thus seeding) work. 0/unset keeps the
       #    upstream random behaviour, so this is a no-op when the env is absent.
+      #    Âncora: upstream v1.4.1 passou a construir `opts` (natPmp no macOS) e
+      #    chamar `new WebTorrent(opts)` dentro de ensureClient(); fazemos merge
+      #    das nossas portas por cima desse `opts`.
       substituteInPlace src/download/engine.ts \
         --replace-fail \
-          'this.client = new WebTorrent();' \
+          'this.client = new WebTorrent(opts);' \
           'const _tlPort = Number(process.env.TORLINK_TORRENT_PORT) || 0;
       const _tlDht = Number(process.env.TORLINK_DHT_PORT) || 0;
-      const _tlOpts = _tlPort > 0 ? { torrentPort: _tlPort, dhtPort: _tlDht > 0 ? _tlDht : _tlPort + 1 } : {};
-      this.client = new WebTorrent(_tlOpts);'
+      const _tlPortOpts = _tlPort > 0 ? { torrentPort: _tlPort, dhtPort: _tlDht > 0 ? _tlDht : _tlPort + 1 } : {};
+      this.client = new WebTorrent({ ...opts, ..._tlPortOpts });'
     '';
   });
 
