@@ -23,5 +23,6 @@
     ./opencode
     ./direnv.nix
     ./fastfetch
+    ./fetch
   ];
 }

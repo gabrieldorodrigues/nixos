@@ -65,6 +65,13 @@
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # fetch (areofyl/fetch) — neofetch-like com um "cubo" 3D animado em ASCII.
+    # Fornece um home-manager module (programs.fetch).
+    areofyl-fetch = {
+      url = "github:areofyl/fetch";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs: {
