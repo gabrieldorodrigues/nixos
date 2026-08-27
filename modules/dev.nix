@@ -1,7 +1,14 @@
 # Ferramentas padrão de desenvolvimento de software.
 # Toolchains: Nix, Node.js/TypeScript e Python. Docker habilitado.
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
+let
+  # Só o `herdr` vem do nixpkgs-unstable; o resto do sistema segue no 26.05.
+  pkgsUnstable = import inputs.nixpkgs-unstable {
+    system = pkgs.stdenv.hostPlatform.system;
+    config.allowUnfree = true;
+  };
+in
 {
   # -------------------------------------------------------------------------
   # Docker (daemon rootful). O usuário é adicionado ao grupo "docker" em
@@ -27,6 +34,7 @@
     neovim         # editor
     just           # runner de tarefas (Justfile)
     claude-code    # Claude é um LLM (AI).
+    pkgsUnstable.herdr  # (unstable) versão mais recente
 
     # --- Build essentials (necessários p/ módulos nativos de Node/Python) ---
     gcc            # compilador C/C++

@@ -47,6 +47,10 @@ in
       deluge
       lmstudio
       jetbrains.idea
+      voxtype
+      termusic
+      seahorse # GUI do gnome-keyring (gerenciar senhas do chaveiro).
+      rustdesk
 
       # Tema de ícones (usado pelo Walker e gerenciadores de arquivos).
       # Papirus com as pastas recoloridas para o accent do Catppuccin Mocha

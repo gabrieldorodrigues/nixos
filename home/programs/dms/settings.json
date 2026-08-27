@@ -279,12 +279,14 @@
   "browserUsageHistory": {},
   "appPickerViewMode": "grid",
   "filePickerUsageHistory": {},
-  "sortAppsAlphabetically": false,
+  "sortAppsAlphabetically": true,
   "appLauncherGridColumns": 4,
   "spotlightCloseNiriOverview": true,
   "rememberLastQuery": false,
   "rememberLastMode": true,
-  "spotlightSectionViewModes": {},
+  "spotlightSectionViewModes": {
+    "apps": "list"
+  },
   "appDrawerSectionViewModes": {},
   "niriOverviewOverlayEnabled": true,
   "niriOverviewLauncherStyle": "full",
@@ -294,9 +296,9 @@
   "dankLauncherV2BorderThickness": 2,
   "dankLauncherV2BorderColor": "primary",
   "dankLauncherV2ShowFooter": true,
-  "dankLauncherV2UnloadOnClose": false,
-  "dankLauncherV2IncludeFilesInAll": false,
-  "dankLauncherV2IncludeFoldersInAll": false,
+  "dankLauncherV2UnloadOnClose": true,
+  "dankLauncherV2IncludeFilesInAll": true,
+  "dankLauncherV2IncludeFoldersInAll": true,
   "launcherUseOverlayLayer": false,
   "launcherStyle": "full",
   "spotlightBarShowModeChips": false,
@@ -584,16 +586,17 @@
   "displaySnapToEdge": true,
   "connectedFrameBarStyleBackups": {
     "default": {
-      "shadowIntensity": 0,
-      "squareCorners": false,
+      "borderEnabled": false,
       "gothCornersEnabled": false,
-      "borderEnabled": false
+      "shadowIntensity": 0,
+      "squareCorners": false
     }
   },
   "barConfigs": [
     {
       "autoHide": false,
       "autoHideDelay": 250,
+      "barInsetPadding": 4,
       "borderColor": "surfaceText",
       "borderEnabled": false,
       "borderOpacity": 1,
@@ -611,12 +614,16 @@
       "id": "default",
       "innerPadding": 0,
       "leftWidgets": ["launcherButton", "workspaceSwitcher", "focusedWindow"],
+      "maximizeDetection": true,
+      "maximizeWidgetIcons": false,
+      "maximizeWidgetText": false,
       "name": "Main Bar",
       "noBackground": false,
       "openOnOverview": false,
       "popupGapsAuto": true,
       "popupGapsManual": 4,
       "position": 0,
+      "removeWidgetPadding": true,
       "rightWidgets": [
         "systemTray",
         "clipboard",
@@ -627,19 +634,14 @@
         "controlCenterButton"
       ],
       "screenPreferences": ["all"],
+      "shadowIntensity": 0,
       "showOnLastDisplay": true,
       "spacing": 4,
       "squareCorners": false,
       "transparency": 1,
       "visible": true,
       "widgetOutlineEnabled": false,
-      "widgetTransparency": 0,
-      "maximizeWidgetIcons": false,
-      "maximizeWidgetText": false,
-      "removeWidgetPadding": true,
-      "shadowIntensity": 0,
-      "barInsetPadding": 4,
-      "maximizeDetection": true
+      "widgetTransparency": 0
     }
   ],
   "desktopClockEnabled": false,
@@ -710,11 +712,11 @@
   "desktopWidgetInstances": [],
   "desktopWidgetGroups": [],
   "builtInPluginSettings": {
-    "dms_settings_search": {
-      "trigger": "?"
-    },
     "dms_clipboard_search": {
       "trigger": "cb"
+    },
+    "dms_settings_search": {
+      "trigger": "?"
     }
   },
   "clipboardClickToPaste": false,
