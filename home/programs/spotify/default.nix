@@ -10,6 +10,14 @@ in
   programs.spicetify = {
     enable = true;
 
+    # Tema temporário: define current_theme como "marketplace", necessário
+    # para instalar temas pela loja embutida. Trocar por um tema de verdade
+    # (ex.: spicePkgs.themes.<nome>) quando escolher um.
+    theme = {
+      name = "marketplace";
+      src = pkgs.writeTextDir "color.ini" "";
+    };
+
     # Marketplace: loja embutida na sidebar do Spotify para navegar/instalar
     # temas, extensões e snippets da comunidade direto pela interface. No
     # spicetify-nix ele é um "custom app", não uma flag booleana.

@@ -156,7 +156,7 @@
       "width": 50
     }
   ],
-  "showWorkspaceIndex": false,
+  "showWorkspaceIndex": true,
   "showWorkspaceName": false,
   "showWorkspacePadding": false,
   "workspaceScrolling": false,
@@ -168,7 +168,7 @@
   "groupActiveWorkspaceApps": false,
   "workspaceFollowFocus": false,
   "showOccupiedWorkspacesOnly": false,
-  "reverseScrolling": false,
+  "reverseScrolling": true,
   "dwlShowAllTags": false,
   "workspaceActiveAppHighlightEnabled": false,
   "workspaceColorMode": "default",
