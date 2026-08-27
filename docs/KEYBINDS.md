@@ -63,6 +63,7 @@ Modificador principal (`mainMod`): **Super** (tecla Windows).
 | `Super + Shift + T`       | Torrents (kitty + torlnk)                       |
 | `Super + Shift + O`       | Obsidian                                        |
 | `Super + Shift + P`       | Leitor (readest)                                |
+| `Super + X`               | Emoji picker (DMS)                              |
 
 ## Clipboard
 

@@ -37,13 +37,6 @@ let
       rev = "v5.1.4";
       hash = "sha256-AKSiIjZWFhjou2ikk36ymC6GJ8OAloiGiIxmeDakYos=";
     };
-    # Launcher: busca pacotes do nixpkgs e roda via `nix shell` (gatilho "nix").
-    nixPackageRunner = pkgs.fetchFromGitHub {
-      owner = "iahccc";
-      repo = "NixPackageRunner";
-      rev = "829ad93c15b7c0ec82a6d7483728029037442601";
-      hash = "sha256-ur+1oN+QmTu7p5ZMpL3rCd4JGYbkerko4twa+tH6uvg=";
-    };
     # Widget da barra: brilho de monitores interno (brightnessctl) e externos
     # (ddcutil via I2C — ver hardware.i2c em modules/hyprland.nix).
     ddcBrightness = pkgs.fetchFromGitHub {
@@ -51,13 +44,6 @@ let
       repo = "dms-brightness-plugin";
       rev = "d3221bb267e99f02dd7793b505ece2cbae118623";
       hash = "sha256-3J+GSoKOLwWl6mpGgT1l0skvPtx8nvUg/Z1MLiFy8nM=";
-    };
-    # Widget da barra: CPU/memória/swap em anéis de progresso.
-    resourceMonitor = pkgs.fetchFromGitHub {
-      owner = "YoungJurry";
-      repo = "dms-resource-monitor";
-      rev = "5e5f9d60f00a0f6fe2b9b515d729c27edeb510c5";
-      hash = "sha256-JX9livc8l78lFA4spGaEoYXRcAgClYsnIITc6kYrhTs=";
     };
     # Daemon: seletor de emoji (busca/copia/cola via clipboard).
     emojiPicker = pkgs.fetchFromGitHub {

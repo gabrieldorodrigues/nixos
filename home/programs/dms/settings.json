@@ -307,24 +307,24 @@
   "weatherEnabled": true,
   "dashTabs": [
     {
-      "enabled": true,
-      "id": "overview"
+      "id": "overview",
+      "enabled": true
     },
     {
-      "enabled": true,
-      "id": "media"
+      "id": "media",
+      "enabled": true
     },
     {
-      "enabled": true,
-      "id": "wallpaper"
+      "id": "wallpaper",
+      "enabled": true
     },
     {
-      "enabled": true,
-      "id": "weather"
+      "id": "weather",
+      "enabled": true
     },
     {
-      "enabled": true,
-      "id": "settings"
+      "id": "settings",
+      "enabled": true
     }
   ],
   "networkPreference": "auto",
@@ -626,12 +626,27 @@
       "removeWidgetPadding": true,
       "rightWidgets": [
         "systemTray",
-        "clipboard",
+        {
+          "id": "discordVoice",
+          "enabled": true
+        },
+        {
+          "id": "ddcBrightness",
+          "enabled": true
+        },
+        {
+          "id": "spacer",
+          "enabled": true,
+          "size": 20
+        },
         "cpuUsage",
         "memUsage",
         "notificationButton",
         "battery",
-        "controlCenterButton"
+        {
+          "id": "controlCenterButton",
+          "enabled": true
+        }
       ],
       "screenPreferences": ["all"],
       "shadowIntensity": 0,
@@ -724,7 +739,11 @@
   "clipboardRememberTypeFilter": false,
   "clipboardTypeFilter": "all",
   "clipboardVisibleEntryActions": ["pin", "edit", "delete"],
-  "launcherPluginVisibility": {},
+  "launcherPluginVisibility": {
+    "recentFiles": {
+      "allowWithoutTrigger": false
+    }
+  },
   "launcherPluginOrder": [],
   "frameEnabled": true,
   "frameThickness": 14,

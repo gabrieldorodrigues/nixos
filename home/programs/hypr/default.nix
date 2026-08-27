@@ -285,6 +285,9 @@ in
       hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("obsidian"), { description = "Obsidian" })
       hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("readest"), { description = "Reader" })
 
+    -- Emoji picker do DMS.
+    hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("dms ipc call emojiPicker toggle"), { description = "Emoji picker" })
+
       -- Histórico de clipboard: gerenciador do DMS (substitui cliphist+walker).
       hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("dms ipc call clipboard toggle"))
 
