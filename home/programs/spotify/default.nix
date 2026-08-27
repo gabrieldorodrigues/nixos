@@ -34,6 +34,19 @@ in
         } + "/builds";
         name = "spicy-lyrics.mjs";
       }
+
+      # Section Marker — marca as seções da música (drops, refrão, mudanças de
+      # ritmo) na playbar, via Audio Analysis API do Spotify. Não empacotado no
+      # spicetify-nix; o build fica em _dist/section-marker.js no repo.
+      {
+        src = pkgs.fetchFromGitHub {
+          owner = "Aimarekin";
+          repo = "Aimarekins-Spicetify-Extensions";
+          rev = "82dbbaec37540e82dcd11d897646c0fdb068c3e8";
+          hash = "sha256-ssUhZDAnPVsIFnKpm83sDe4+aShOjgWnmtPxOlifHAQ=";
+        } + "/_dist";
+        name = "section-marker.js";
+      }
     ];
 
     # Snippets: pequenos ajustes de CSS. Lista em spicePkgs.snippets (ver
