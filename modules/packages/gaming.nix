@@ -48,9 +48,8 @@
     lutris # Lutris (gerenciador de jogos e emuladores).
     shadps4-qtlauncher # Emulador de PlayStation 4 (launcher Qt).
     rpcs3 # Emulador de PlayStation 3.
-    dolphin # Emulador de GameCube/Wii.
+    dolphin-emu # Emulador de GameCube/Wii.
     eden # Switch 1 emulator derived from Yuzu and Sudachi
-    pcsx2 # Emulador de PlayStation 2 (launcher Qt).
     shipwright
   ];
 }
