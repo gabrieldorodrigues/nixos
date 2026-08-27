@@ -22,6 +22,7 @@
     ./rclone
     ./opencode
     ./direnv.nix
+    ./herdr.nix
     ./fastfetch
     ./fetch
   ];

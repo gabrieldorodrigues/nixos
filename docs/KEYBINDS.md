@@ -79,14 +79,16 @@ Modificador principal (`mainMod`): **Super** (tecla Windows).
 
 ## Screenshots e cores
 
-| Atalho                  | Ação                        |
-| ----------------------- | --------------------------- |
-| `Super + Shift + S`     | Screenshot de região        |
-| `Super + Shift + Print` | Screenshot de região        |
-| `Print`                 | Screenshot da tela inteira  |
-| `Super + Print`         | Seletor de cor (hyprpicker) |
+| Atalho                  | Ação                                |
+| ----------------------- | ----------------------------------- |
+| `Super + Shift + S`     | Screenshot de região (editor)       |
+| `Super + Shift + Print` | Screenshot de região (editor)       |
+| `Print`                 | Screenshot da tela inteira (editor) |
+| `Super + Print`         | Seletor de cor (hyprpicker)         |
 
-> Screenshots são salvos em `~/Pictures/Screenshots/`, copiados para o clipboard e notificados.
+> Screenshots usam o plugin **Quick Capture** do DMS: após a captura abre o
+> editor de anotação (setas, texto, blur, etc.). Dali dá para copiar para o
+> clipboard, salvar ou exportar (WebP/JPEG/PDF, OCR e QR).
 
 ## Mídia e hardware
 

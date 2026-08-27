@@ -325,11 +325,13 @@ in
       hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
       hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
-      -- Screenshots (save to ~/Pictures/Screenshots + copy to clipboard + notify)
-      -- Super+Shift+S = region | Super+Shift+P = full screen | Print also works if your keyboard has it
-      hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd([[mkdir -p ~/Pictures/Screenshots && f=~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png && grim -g "$(slurp)" "$f" && wl-copy < "$f" && notify-send "Screenshot" "Região salva em $f"]]))
-      hl.bind("Print", hl.dsp.exec_cmd([[mkdir -p ~/Pictures/Screenshots && f=~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png && grim "$f" && wl-copy < "$f" && notify-send "Screenshot" "Tela salva em $f"]]))
-      hl.bind(mainMod .. " + SHIFT + Print", hl.dsp.exec_cmd([[mkdir -p ~/Pictures/Screenshots && f=~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png && grim -g "$(slurp)" "$f" && wl-copy < "$f" && notify-send "Screenshot" "Região salva em $f"]]))
+      -- Screenshots via plugin Quick Capture do DMS (captura + editor de anotação).
+      -- Substitui o grim/slurp caseiro; o plugin é entregue por home/programs/dms.
+      -- Super+Shift+S = região (editor) | Print = tela cheia (editor)
+      -- Super+Shift+Print = região (editor) | Super+Print = seletor de cor
+      hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("dms ipc call quickCapture screenshot region edit"), { description = "Screenshot: região (editor)" })
+      hl.bind("Print", hl.dsp.exec_cmd("dms ipc call quickCapture screenshot full edit"), { description = "Screenshot: tela cheia (editor)" })
+      hl.bind(mainMod .. " + SHIFT + Print", hl.dsp.exec_cmd("dms ipc call quickCapture screenshot region edit"), { description = "Screenshot: região (editor)" })
       hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd("hyprpicker -a"), { description = "Color picker" })
 
       -- Media & hardware keys (work even when locked)

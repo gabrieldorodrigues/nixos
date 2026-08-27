@@ -198,4 +198,11 @@ in
   systemd.user.tmpfiles.rules = [
     "L+ %h/Pictures/wallpaper          - - - - ${wallpaperSource}"
   ];
+
+  # DDC/CI para o plugin de brilho do DMS (ddcBrightness) controlar monitores
+  # EXTERNOS via ddcutil. Habilita o módulo i2c-dev + regras de udev e cria o
+  # grupo "i2c" (o usuário é adicionado em modules/users.nix) para acessar os
+  # barramentos /dev/i2c-* sem root. O brilho de telas internas continua pelo
+  # brightnessctl (acima), que não depende disto.
+  hardware.i2c.enable = true;
 }
