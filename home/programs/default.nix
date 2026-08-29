@@ -12,6 +12,7 @@
     ./hypr
     ./btop
     ./kitty
+    ./termusic
     ./dms
     ./steam
     ./spotify

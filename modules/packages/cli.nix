@@ -20,6 +20,7 @@
       cmatrix
       tailscale
       superfile
+      termusic
       lavat
       # btop is provided by Home Manager (home/programs/btop) so its config
       # (Catppuccin Mocha theme) is managed there.

@@ -253,6 +253,10 @@ in
       hl.bind(mainMod .. " + T", hl.dsp.window.float({ action = "toggle" }), { description = "Toggle tiling/floating" })
       -- App launcher agora é o spotlight do DMS (substitui o walker).
       hl.bind(mainMod .. " + space", hl.dsp.exec_cmd("dms ipc call spotlight toggle"))
+      -- Overview do DMS (dash na aba de overview).
+      hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("dms ipc call dash toggle overview"), { description = "DMS overview" })
+      -- Dash do DMS já na aba de mídia (players MPRIS).
+      hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("dms ipc call dash toggle media"), { description = "DMS media (dash)" })
       hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
       hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }))
       -- Lock via DMS (substitui hyprlock/hypridle).

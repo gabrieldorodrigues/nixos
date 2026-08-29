@@ -51,6 +51,8 @@ Modificador principal (`mainMod`): **Super** (tecla Windows).
 | Atalho                    | Ação                                            |
 | ------------------------- | ----------------------------------------------- |
 | `Super + Space`           | Lançador de apps (DMS spotlight)                |
+| `Super + A`               | Overview de janelas/workspaces (DMS)            |
+| `Super + M`               | Mídia/players (dash do DMS)                     |
 | `Super + Return`          | Terminal (kitty)                                |
 | `Super + Shift + F`       | Gerenciador de arquivos, nova janela (nautilus) |
 | `Super + Shift + B`       | Navegador (firefox)                             |
