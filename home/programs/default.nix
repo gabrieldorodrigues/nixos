@@ -24,6 +24,7 @@
     ./opencode
     ./direnv.nix
     ./herdr.nix
+    ./fastpotify.nix
     ./fastfetch
     ./fetch
   ];

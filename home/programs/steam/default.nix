@@ -1,6 +1,23 @@
 { config, lib, pkgs, ... }:
 
 let
+  cursorTheme = "BreezeX-RosePine-Linux";
+
+  # Steam's nested runtime needs the Xcursor theme explicitly selected and a
+  # path that remains visible inside pressure-vessel.
+  steamWithCursorFix = pkgs.symlinkJoin {
+    name = "steam-with-cursor-fix";
+    paths = [ pkgs.millennium-steam ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/steam \
+        --set XCURSOR_THEME ${cursorTheme} \
+        --set XCURSOR_SIZE 24 \
+        --set HYPRCURSOR_SIZE 24 \
+        --set XCURSOR_PATH ${config.home.homeDirectory}/.icons
+    '';
+  };
+
   # Escala da interface do cliente Steam (Configurações → Interface →
   # "Dimensionar tamanho do texto e dos ícones" / Acessibilidade). Valor entre
   # ~0.71 e ~3.41 no seu monitor; 0.8 = interface um pouco menor que o padrão.
@@ -48,4 +65,39 @@ in
     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       run ${patchScript}
     '';
+
+  # pressure-vessel cannot reliably follow a symlink from ~/.icons into the
+  # Nix store, so install a real copy of the same theme used by Hyprland.
+  home.activation.steamCursorTheme =
+    lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      theme="$HOME/.icons/${cursorTheme}"
+      source="${pkgs.rose-pine-cursor}/share/icons/${cursorTheme}"
+      tmp="$HOME/.icons/.${cursorTheme}.tmp"
+
+      run ${pkgs.coreutils}/bin/mkdir -p "$HOME/.icons"
+      if [ -e "$theme" ]; then
+        run ${pkgs.coreutils}/bin/chmod -R u+w "$theme"
+      fi
+      if [ -e "$tmp" ]; then
+        run ${pkgs.coreutils}/bin/chmod -R u+w "$tmp"
+      fi
+      run ${pkgs.coreutils}/bin/rm -rf "$theme" "$tmp"
+      run ${pkgs.coreutils}/bin/mkdir -p "$tmp"
+      run ${pkgs.coreutils}/bin/cp -RL "$source/." "$tmp/"
+      run ${pkgs.coreutils}/bin/chmod -R u+w "$tmp"
+      run ${pkgs.coreutils}/bin/mv "$tmp" "$theme"
+    '';
+
+  home.file.".local/share/applications/steam.desktop".text = ''
+    [Desktop Entry]
+    Name=Steam
+    Comment=Application for managing and launching games on Steam
+    Exec=env XCURSOR_THEME=${cursorTheme} XCURSOR_SIZE=24 HYPRCURSOR_SIZE=24 XCURSOR_PATH=${config.home.homeDirectory}/.icons ${steamWithCursorFix}/bin/steam %U
+    Icon=steam
+    Terminal=false
+    Type=Application
+    Categories=Network;FileTransfer;Game;
+    StartupNotify=true
+    StartupWMClass=steam
+  '';
 }

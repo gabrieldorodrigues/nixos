@@ -66,6 +66,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Fastpotify — cliente Spotify nativo em Rust, sem navegador embutido.
+    # Instalado em paralelo ao cliente oficial customizado pelo Spicetify.
+    fastpotify = {
+      url = "github:crmne/fastpotify";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # fetch (areofyl/fetch) — neofetch-like com um "cubo" 3D animado em ASCII.
     # Fornece um home-manager module (programs.fetch).
     areofyl-fetch = {

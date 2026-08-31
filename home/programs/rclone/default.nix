@@ -1,6 +1,6 @@
 { pkgs, lib, ... }:
 
-# rclone — monta o Google Drive como uma pasta normal em ~/GoogleDrive.
+# rclone — monta Google Drive e Proton Drive como pastas normais na Home.
 #
 # POR QUE rclone (e não GNOME Online Accounts)?
 #   O gvfs 1.60 REMOVEU o backend de Google Drive (o antigo `gvfsd-google`
@@ -21,52 +21,86 @@
 #   8. y) Yes this is OK  →  q) Quit config
 #   Depois:  systemctl --user restart rclone-gdrive
 #
+# Proton Drive:
+#   1. Rode: rclone config
+#   2. n) New remote → name> protondrive (o nome PRECISA ser esse)
+#   3. Storage> protondrive → informe a conta Proton e conclua o 2FA, se pedido
+#   4. y) Yes this is OK → q) Quit config
+#   Depois: systemctl --user restart rclone-protondrive
+#
 # O serviço tenta montar automaticamente no login; enquanto o remote "gdrive"
-# não existir ele apenas fica reiniciando a cada 10s (inofensivo).
+# ou "protondrive" não existir, o respectivo serviço tenta novamente a cada 10s.
 
 let
-  mountDir = "%h/GoogleDrive";
-  remote = "gdrive:";
   # rclone precisa do fusermount3 *setuid* para (des)montar; no NixOS ele fica
   # no wrapper estável abaixo, não no binário puro do store.
   fusermount3 = "/run/wrappers/bin/fusermount3";
 
-  rcloneMount = lib.concatStringsSep " " [
-    "${pkgs.rclone}/bin/rclone mount ${remote} ${mountDir}"
-    "--config %h/.config/rclone/rclone.conf"
-    "--vfs-cache-mode writes" # permite editar/enviar arquivos corretamente
-    "--dir-cache-time 24h" # cache de listagem de pastas
-    "--poll-interval 15s" # propaga mudanças feitas na web em ~15s
-    "--umask 077" # arquivos montados ficam privados ao usuário
-  ];
-in
-{
-  home.packages = [ pkgs.rclone ];
-
-  systemd.user.services.rclone-gdrive = {
+  mkRcloneMount = {
+    description,
+    remote,
+    mountDir,
+    extraOptions ? [ ],
+    restart ? "on-failure",
+  }: {
     Unit = {
-      Description = "rclone: monta o Google Drive (gdrive:) em ~/GoogleDrive";
+      Description = description;
       Documentation = [ "man:rclone(1)" ];
     };
 
     Service = {
-      Type = "notify"; # rclone avisa o systemd quando o mount está pronto
-      # Garante que rclone ache o fusermount3 setuid ao montar.
+      Type = "notify";
       Environment = [ "PATH=/run/wrappers/bin:/run/current-system/sw/bin" ];
-      # Limpa um mountpoint "zumbi" de um crash anterior e cria a pasta.
       ExecStartPre = [
         "-${fusermount3} -uz ${mountDir}"
         "${pkgs.coreutils}/bin/mkdir -p ${mountDir}"
       ];
-      ExecStart = rcloneMount;
+      ExecStart = lib.concatStringsSep " " ([
+        "${pkgs.rclone}/bin/rclone mount ${remote} ${mountDir}"
+        "--config %h/.config/rclone/rclone.conf"
+        "--vfs-cache-mode writes"
+        "--dir-cache-time 24h"
+        "--umask 077"
+      ] ++ extraOptions);
       ExecStop = "${fusermount3} -u ${mountDir}";
-      # Se a rede ainda não subiu no login, tenta de novo até conseguir.
-      Restart = "on-failure";
+      Restart = restart;
       RestartSec = "10";
     };
 
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
+    Install.WantedBy = [ "default.target" ];
+  };
+in
+{
+  home.packages = [ pkgs.rclone ];
+
+  # Mantém os favoritos existentes e adiciona o mount à sidebar do Nautilus.
+  home.activation.protonDriveBookmark =
+    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      bookmarks="$HOME/.config/gtk-3.0/bookmarks"
+      entry="file://$HOME/ProtonDrive Proton Drive"
+      run ${pkgs.coreutils}/bin/mkdir -p "$HOME/.config/gtk-3.0"
+      if [ ! -f "$bookmarks" ] || ! ${pkgs.gnugrep}/bin/grep -Fxq "$entry" "$bookmarks"; then
+        if [ -n "''${DRY_RUN_CMD:-}" ]; then
+          echo "Would add Proton Drive to $bookmarks"
+        else
+          printf '%s\n' "$entry" >> "$bookmarks"
+        fi
+      fi
+    '';
+
+  systemd.user.services.rclone-gdrive = mkRcloneMount {
+    description = "rclone: monta o Google Drive (gdrive:) em ~/GoogleDrive";
+    remote = "gdrive:";
+    mountDir = "%h/GoogleDrive";
+    extraOptions = [ "--poll-interval 15s" ];
+  };
+
+  systemd.user.services.rclone-protondrive = mkRcloneMount {
+    description = "rclone: monta o Proton Drive (protondrive:) em ~/ProtonDrive";
+    remote = "protondrive:";
+    mountDir = "%h/ProtonDrive";
+    # O backend Proton é experimental e a API aplica rate limit agressivo;
+    # não entre em loop quando ela responder 500/503.
+    restart = "no";
   };
 }

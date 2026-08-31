@@ -205,7 +205,9 @@
   "audioScrollMode": "volume",
   "audioWheelScrollAmount": 5,
   "audioDeviceScrollVolumeEnabled": false,
-  "mediaExcludePlayers": ["firefox"],
+  "mediaExcludePlayers": [
+    "firefox"
+  ],
   "clockCompactMode": false,
   "focusedWindowCompactMode": false,
   "focusedWindowSize": 1,
@@ -300,31 +302,31 @@
   "dankLauncherV2IncludeFilesInAll": true,
   "dankLauncherV2IncludeFoldersInAll": true,
   "launcherUseOverlayLayer": false,
-  "launcherStyle": "full",
+  "launcherStyle": "spotlight",
   "spotlightBarShowModeChips": false,
   "keybindsFloatingWindow": false,
   "useAutoLocation": true,
   "weatherEnabled": true,
   "dashTabs": [
     {
-      "id": "overview",
-      "enabled": true
+      "enabled": true,
+      "id": "overview"
     },
     {
-      "id": "media",
-      "enabled": true
+      "enabled": true,
+      "id": "media"
     },
     {
-      "id": "wallpaper",
-      "enabled": true
+      "enabled": true,
+      "id": "wallpaper"
     },
     {
-      "id": "weather",
-      "enabled": true
+      "enabled": true,
+      "id": "weather"
     },
     {
-      "id": "settings",
-      "enabled": true
+      "enabled": true,
+      "id": "settings"
     }
   ],
   "networkPreference": "auto",
@@ -584,25 +586,22 @@
   "displayProfileAutoSelect": false,
   "displayShowDisconnected": false,
   "displaySnapToEdge": true,
-  "connectedFrameBarStyleBackups": {
-    "default": {
-      "borderEnabled": false,
-      "gothCornersEnabled": false,
-      "shadowIntensity": 0,
-      "squareCorners": false
-    }
-  },
+  "connectedFrameBarStyleBackups": {},
   "barConfigs": [
     {
       "autoHide": false,
       "autoHideDelay": 250,
-      "barInsetPadding": 4,
+      "barInsetPadding": 28,
       "borderColor": "surfaceText",
       "borderEnabled": false,
       "borderOpacity": 1,
       "borderThickness": 1,
       "bottomGap": 0,
-      "centerWidgets": ["music", "clock", "weather"],
+      "centerWidgets": [
+        "music",
+        "clock",
+        "weather"
+      ],
       "clickThrough": false,
       "enabled": true,
       "fontScale": 1,
@@ -612,8 +611,12 @@
       "hoverPopouts": false,
       "iconScale": 1,
       "id": "default",
-      "innerPadding": 0,
-      "leftWidgets": ["launcherButton", "workspaceSwitcher", "focusedWindow"],
+      "innerPadding": -8,
+      "leftWidgets": [
+        "launcherButton",
+        "workspaceSwitcher",
+        "focusedWindow"
+      ],
       "maximizeDetection": true,
       "maximizeWidgetIcons": false,
       "maximizeWidgetText": false,
@@ -627,16 +630,16 @@
       "rightWidgets": [
         "systemTray",
         {
-          "id": "discordVoice",
-          "enabled": true
-        },
-        {
-          "id": "ddcBrightness",
-          "enabled": true
-        },
-        {
-          "id": "spacer",
           "enabled": true,
+          "id": "discordVoice"
+        },
+        {
+          "enabled": true,
+          "id": "ddcBrightness"
+        },
+        {
+          "enabled": true,
+          "id": "spacer",
           "size": 20
         },
         "cpuUsage",
@@ -644,11 +647,13 @@
         "notificationButton",
         "battery",
         {
-          "id": "controlCenterButton",
-          "enabled": true
+          "enabled": true,
+          "id": "controlCenterButton"
         }
       ],
-      "screenPreferences": ["all"],
+      "screenPreferences": [
+        "all"
+      ],
       "shadowIntensity": 0,
       "showOnLastDisplay": true,
       "spacing": 4,
@@ -683,7 +688,9 @@
   "desktopClockY": -1,
   "desktopClockWidth": 280,
   "desktopClockHeight": 180,
-  "desktopClockDisplayPreferences": ["all"],
+  "desktopClockDisplayPreferences": [
+    "all"
+  ],
   "systemMonitorEnabled": false,
   "systemMonitorShowHeader": true,
   "systemMonitorTransparency": 0.8,
@@ -720,7 +727,9 @@
   "systemMonitorY": -1,
   "systemMonitorWidth": 320,
   "systemMonitorHeight": 480,
-  "systemMonitorDisplayPreferences": ["all"],
+  "systemMonitorDisplayPreferences": [
+    "all"
+  ],
   "systemMonitorVariants": [],
   "desktopWidgetPositions": {},
   "desktopWidgetGridSettings": {},
@@ -738,19 +747,25 @@
   "clipboardEnterToPaste": false,
   "clipboardRememberTypeFilter": false,
   "clipboardTypeFilter": "all",
-  "clipboardVisibleEntryActions": ["pin", "edit", "delete"],
+  "clipboardVisibleEntryActions": [
+    "pin",
+    "edit",
+    "delete"
+  ],
   "launcherPluginVisibility": {
     "recentFiles": {
       "allowWithoutTrigger": false
     }
   },
   "launcherPluginOrder": [],
-  "frameEnabled": true,
+  "frameEnabled": false,
   "frameThickness": 14,
   "frameRounding": 17,
   "frameColor": "",
   "frameOpacity": 1,
-  "frameScreenPreferences": ["all"],
+  "frameScreenPreferences": [
+    "all"
+  ],
   "frameBarSize": 34,
   "frameShowOnOverview": true,
   "frameBlurEnabled": true,

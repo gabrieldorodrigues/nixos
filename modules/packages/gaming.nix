@@ -1,6 +1,18 @@
 # Jogos: Steam, emuladores e launchers.
 { pkgs, inputs, ... }:
 
+let
+  edenFixed = pkgs.symlinkJoin {
+    name = "eden-fixed";
+    paths = [ pkgs.eden ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/eden \
+        --set GSETTINGS_SCHEMA_DIR "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas" \
+        --set-default QT_QPA_PLATFORM xcb
+    '';
+  };
+in
 {
   # Overlay do Millennium (loader de temas/plugins do cliente Steam). Expõe o
   # pacote `millennium-steam` usado abaixo como o pacote da Steam.
@@ -49,7 +61,8 @@
     shadps4-qtlauncher # Emulador de PlayStation 4 (launcher Qt).
     rpcs3 # Emulador de PlayStation 3.
     dolphin-emu # Emulador de GameCube/Wii.
-    eden # Switch 1 emulator derived from Yuzu and Sudachi
+    edenFixed # Switch 1 emulator; corrige schemas GTK e usa XWayland.
     shipwright
+    r2modman
   ];
 }

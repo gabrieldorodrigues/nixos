@@ -79,6 +79,27 @@
         "type": "github"
       }
     },
+    "fastpotify": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "rust-overlay": "rust-overlay"
+      },
+      "locked": {
+        "lastModified": 1788193997,
+        "narHash": "sha256-0nwSlyOwoOQLriHTqyVdhgpddQqzZIkJVkBj6k77dyg=",
+        "owner": "crmne",
+        "repo": "fastpotify",
+        "rev": "ebdc625389104cf997f3a36a13d46a67f35941c1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "crmne",
+        "repo": "fastpotify",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -193,6 +214,7 @@
         "areofyl-fetch": "areofyl-fetch",
         "dank-greeter": "dank-greeter",
         "dms": "dms",
+        "fastpotify": "fastpotify",
         "home-manager": "home-manager",
         "millennium": "millennium",
         "nixpkgs": "nixpkgs",
@@ -200,6 +222,27 @@
         "spicetify-nix": "spicetify-nix",
         "torlink": "torlink",
         "zen-browser": "zen-browser"
+      }
+    },
+    "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "fastpotify",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1787834454,
+        "narHash": "sha256-jXSvqn04IOecJCvSvl8+g3PsbDVNP6qKs6dKUs/b16k=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "dc2fd1acc537f3583744e1373597a5731ff7a6e3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
       }
     },
     "spicetify-nix": {

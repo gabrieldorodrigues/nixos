@@ -127,6 +127,10 @@ in
           -- and the XCURSOR_THEME below; package comes from home/programs/gtk.
           hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-theme BreezeX-RosePine-Linux")
           hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-size 24")
+          -- Environment variables select the theme for applications; this call
+          -- also loads it into Hyprland's own cursor manager (including the
+          -- cursor displayed over XWayland surfaces such as Steam).
+          hl.exec_cmd("hyprctl setcursor BreezeX-RosePine-Linux 24")
       end)
 
       -------------------------------
@@ -198,6 +202,12 @@ in
               inactive_timeout    = 0,
               hide_on_key_press   = false,
               hide_on_touch       = false,
+          },
+
+          -- Prevent XWayland (Steam, etc.) from upscaling with nearest-neighbor
+          -- interpolation, which causes pixelated cursors and blurry UI.
+          xwayland = {
+              force_zero_scaling = true,
           },
       })
 
