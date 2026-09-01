@@ -74,6 +74,13 @@ let
       rev = "15010449df58ffec4f85acd48f8ee1145de31a1a";
       hash = "sha256-zAzkM1oO50Opja8OskXyCQ7ma3eT+1fikb7bmguG8eM=";
     };
+    # Widget + daemon: downloader de audio/video da web (yt-dlp + ffmpeg).
+    mediaDownloader = pkgs.fetchFromGitHub {
+      owner = "hthienloc";
+      repo = "dms-media-downloader";
+      rev = "e4f5c92e67ede329d91d608e4d6974b7f3133f2f";
+      hash = "sha256-BBChT5P9B+rIttVT30jg+1HVYqW2oWfUrWdpmq8IlMA=";
+    };
   };
 
   # Defaults do gerenciador de plugins: habilita todos os plugins acima. É só uma
@@ -137,12 +144,15 @@ in
   #   - quickCapture: export WebP/JPEG (imagemagick), PDF (img2pdf), OCR
   #     (tesseract), QR (zbar);
   #   - ddcBrightness: brilho de monitores externos via DDC/CI (ddcutil).
+  #   - mediaDownloader: download e conversao de midia (yt-dlp + ffmpeg).
   home.packages = with pkgs; [
     imagemagick
     img2pdf
     tesseract
     zbar
     ddcutil
+    yt-dlp
+    ffmpeg
   ];
 
   # Semeia o session.json do DMS com o wallpaper inicial APENAS se ele ainda não
