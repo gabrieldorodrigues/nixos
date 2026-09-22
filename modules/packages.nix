@@ -13,6 +13,11 @@
   # Install firefox.
   programs.firefox.enable = true;
 
+  # Flatpak: habilita o serviço (BlueZ do portal já vem do xdg-desktop-portal-hyprland).
+  # O remote flathub é adicionado uma vez via `flatpak remote-add` (ver comentário).
+  # Ex.: flatpak install flathub app.fluxer.Fluxer
+  services.flatpak.enable = true;
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 

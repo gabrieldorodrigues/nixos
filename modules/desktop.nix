@@ -5,6 +5,13 @@
 {
   imports = [ inputs.dank-greeter.nixosModules.default ];
 
+  # Bluetooth stack (BlueZ). Power it on automatically at boot so paired
+  # devices like a Bluetooth mouse can reconnect as soon as the session starts.
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+
   # Servidor X mínimo. Mantido para apps X11 via XWayland; o Hyprland roda em
   # Wayland por cima. (O KDE Plasma foi removido.)
   services.xserver.enable = true;

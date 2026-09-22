@@ -29,4 +29,11 @@
   # forçar os dispositivos a ficarem sempre ativos já no boot.
   # OBS: o mais eficaz é DESATIVAR o "Fast Startup" no Windows (powercfg /h off).
   boot.kernelParams = [ "usbcore.autosuspend=-1" ];
+
+  # Reforço no udev para interfaces HID USB (classe 03): mantém power/control
+  # em "on" quando o dispositivo aparece, evitando que mouse/teclado por dongle
+  # entrem em autosuspend e só "acordem" após reconectar manualmente.
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="usb", ATTR{bInterfaceClass}=="03", TEST=="power/control", ATTR{power/control}="on"
+  '';
 }
