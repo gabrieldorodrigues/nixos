@@ -190,7 +190,12 @@ in
     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       pluginSettings="${config.xdg.configHome}/DankMaterialShell/plugin_settings.json"
       run mkdir -p "$(dirname "$pluginSettings")"
-      [ -e "$pluginSettings" ] || echo '{}' > "$pluginSettings"
+      # Semente base: se o arquivo não existir, estiver vazio ou não for um JSON
+      # válido, começa de '{}'. (Antes só checávamos existência, então um arquivo
+      # vazio/corrompido fazia o jq falhar e nenhum plugin era habilitado.)
+      if [ ! -s "$pluginSettings" ] || ! ${pkgs.jq}/bin/jq -e . "$pluginSettings" >/dev/null 2>&1; then
+        echo '{}' > "$pluginSettings"
+      fi
       tmp="$(mktemp)"
       if ${pkgs.jq}/bin/jq --slurpfile defs ${pluginSettingsSeed} \
            '$defs[0] * .' "$pluginSettings" > "$tmp" 2>/dev/null; then
