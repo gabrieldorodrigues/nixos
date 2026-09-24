@@ -28,6 +28,7 @@ in
       kdePackages.kate
       gnome-calculator
       vscode
+      postman
       obsidian
       onlyoffice-desktopeditors
       foliate
@@ -49,6 +50,7 @@ in
       jetbrains.idea
       voxtype
       termusic
+      pear-desktop
       seahorse # GUI do gnome-keyring (gerenciar senhas do chaveiro).
       rustdesk
       gnome-font-viewer
