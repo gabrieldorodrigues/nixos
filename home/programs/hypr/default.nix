@@ -261,6 +261,12 @@ in
       -- the session Hyprland was started in; the command runs via /bin/sh.
       hl.bind(mainMod .. " + Delete", hl.dsp.exec_cmd("loginctl terminate-session $XDG_SESSION_ID"), { description = "Log out of the Hyprland session" })
       hl.bind(mainMod .. " + T", hl.dsp.window.float({ action = "toggle" }), { description = "Toggle tiling/floating" })
+      -- Inverte a orientação do split ATUAL (vertical <-> horizontal). O dwindle
+      -- decide a direção pela proporção da janela: numa tela 16:9, a 3ª janela
+      -- costuma empilhar (split horizontal) em vez de virar uma 3ª coluna. Com o
+      -- foco na janela empilhada, aperte Super+J para transformar o par em duas
+      -- colunas lado a lado — resultando nas 3 colunas verticais.
+      hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"), { description = "Alterna split vertical/horizontal (colunas)" })
       -- App launcher agora é o spotlight do DMS (substitui o walker).
       hl.bind(mainMod .. " + space", hl.dsp.exec_cmd("dms ipc call spotlight toggle"))
       -- Overview do DMS (dash na aba de overview).

@@ -123,14 +123,6 @@ in
     });
   '';
 
-  # GNOME Online Accounts (GOA). Enables the goa-daemon + D-Bus service that
-  # stores cloud credentials (Google, Nextcloud, Microsoft…). Combined with the
-  # GOA-enabled gvfs above, adding a Google account here makes the Drive show up
-  # in Nautilus as a mountable location (google-drive://). The accounts are
-  # added / removed through the gnome-online-accounts-gtk GUI below (Plasma's
-  # System Settings would provide this, but the Hyprland session has none).
-  services.gnome.gnome-online-accounts.enable = true;
-
   # Secret Service (chaveiro). A sessão Hyprland não tem um ambiente de desktop
   # para fornecer o daemon org.freedesktop.secrets, então apps que guardam
   # credenciais nele falhavam com "The Secret Service daemon is neither running
@@ -186,7 +178,6 @@ in
     sushi
     ffmpegthumbnailer
     gnome-epub-thumbnailer
-    gnome-online-accounts-gtk # GUI to add cloud accounts (Google Drive → Nautilus)
     tmux                # used by the Super+Alt+Return keybind
   ];
 

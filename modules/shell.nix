@@ -8,6 +8,19 @@ let
   nixosUpdate = pkgs.writeShellScriptBin "nixos-update" ''
     sudo nixos-rebuild switch --flake /etc/nixos#nixos "$@"
   '';
+
+  # `update-packages` = atualiza o flake.lock de todos os inputs, MENOS o
+  # nixpkgs-unstable, que fica fixado de propósito (ABI do hyprglass; ver o
+  # comentário no flake.nix). Rodar `nix flake update` puro bumpa o unstable e
+  # quebra o plugin ("GLIBCXX_... not found"). Depois disso, use `update`.
+  nixosUpdatePackages = pkgs.writeShellScriptBin "nixos-update-packages" ''
+    set -e
+    unstable_rev="f13ff45afd1bb73e640eaa08a7066dbed07e3238"
+    echo "Atualizando inputs (nixpkgs-unstable permanece fixado)..."
+    nix flake update --flake /etc/nixos \
+      --override-input nixpkgs-unstable "github:NixOS/nixpkgs/$unstable_rev"
+    echo "flake.lock atualizado. Rode 'update' para aplicar ao sistema."
+  '';
 in
 {
   # Fish shell as the main interactive shell.
@@ -17,6 +30,8 @@ in
     shellAliases = {
       # `nixos-update` = rebuild do sistema a partir do flake (ver o let acima).
       update = "nixos-update";
+      # `nixos-update-packages` = bump dos inputs sem tocar no unstable fixado.
+      update-packages = "nixos-update-packages";
       ll = "ls -lah";
     };
 
@@ -61,6 +76,7 @@ in
   # Fish plugins (auto-loaded from vendor dirs by fish on NixOS).
   environment.systemPackages = with pkgs; [
     nixosUpdate               # `update` wrapper: rebuild do sistema a partir do flake
+    nixosUpdatePackages       # `update-packages`: bump dos inputs (unstable fixado)
     fishPlugins.tide          # prompt
     fishPlugins.fzf-fish      # fzf key bindings (Ctrl+R, Ctrl+T, etc.)
     fishPlugins.autopair      # auto-close brackets/quotes
@@ -76,6 +92,7 @@ in
     syntaxHighlighting.enable = true;
     shellAliases = {
       update = "nixos-update";
+      update-packages = "nixos-update-packages";
       ll = "ls -lah";
       ".." = "cd ..";
     };
