@@ -9,16 +9,19 @@ let
     sudo nixos-rebuild switch --flake /etc/nixos#nixos "$@"
   '';
 
-  # `update-packages` = atualiza o flake.lock de todos os inputs, MENOS o
-  # nixpkgs-unstable, que fica fixado de propósito (ABI do hyprglass; ver o
-  # comentário no flake.nix). Rodar `nix flake update` puro bumpa o unstable e
-  # quebra o plugin ("GLIBCXX_... not found"). Depois disso, use `update`.
+  # `update-packages` = atualiza o flake.lock de todos os inputs, MENOS os que
+  # ficam fixados de propósito: `nixpkgs-unstable` (ABI do hyprglass) e
+  # `fastpotify` (derivation acoplada ao rev; ver comentários no flake.nix).
+  # Rodar `nix flake update` puro bumpa os dois e quebra a build. Depois disso,
+  # use `update`.
   nixosUpdatePackages = pkgs.writeShellScriptBin "nixos-update-packages" ''
     set -e
     unstable_rev="f13ff45afd1bb73e640eaa08a7066dbed07e3238"
-    echo "Atualizando inputs (nixpkgs-unstable permanece fixado)..."
+    fastpotify_rev="ebdc625389104cf997f3a36a13d46a67f35941c1"
+    echo "Atualizando inputs (nixpkgs-unstable e fastpotify permanecem fixados)..."
     nix flake update --flake /etc/nixos \
-      --override-input nixpkgs-unstable "github:NixOS/nixpkgs/$unstable_rev"
+      --override-input nixpkgs-unstable "github:NixOS/nixpkgs/$unstable_rev" \
+      --override-input fastpotify "github:crmne/fastpotify/$fastpotify_rev"
     echo "flake.lock atualizado. Rode 'update' para aplicar ao sistema."
   '';
 in

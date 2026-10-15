@@ -68,8 +68,17 @@
 
     # Fastpotify — cliente Spotify nativo em Rust, sem navegador embutido.
     # Instalado em paralelo ao cliente oficial customizado pelo Spicetify.
+    #
+    # FIXADO num rev específico DE PROPÓSITO: a derivation em
+    # home/programs/fastpotify.nix é acoplada a ESTE commit — ela fixa o rev do
+    # fork `projectm-rs`, o hash do `projectmSrc`, o outputHash do
+    # `librespot-audio` e um `sed` que remove a linha do projectm-sys por rev
+    # exato. Bumpar o fastpotify muda o Cargo.lock (novos forks git como
+    # winit/dpi, egui, fastframe…) e a build quebra ("No hash was found while
+    # vendoring the git dependency dpi-0.1.1"). Só suba este rev revisando a
+    # derivation junto (revs/hashes dos forks + sed do projectm).
     fastpotify = {
-      url = "github:crmne/fastpotify";
+      url = "github:crmne/fastpotify/ebdc625389104cf997f3a36a13d46a67f35941c1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -77,6 +86,15 @@
     # Fornece um home-manager module (programs.fetch).
     areofyl-fetch = {
       url = "github:areofyl/fetch";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # nix-craftapps — empacota os "ArtCraft Crafting Apps" (storytold): 12 apps
+    # criativos em Rust (photocraft, vectorcraft, filmcraft…). Fornece módulo
+    # NixOS (programs.craftapps); a seleção de apps fica em
+    # modules/packages/media.nix. São binários pré-compilados upstream.
+    nix-craftapps = {
+      url = "github:olafkfreund/nix-craftapps";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

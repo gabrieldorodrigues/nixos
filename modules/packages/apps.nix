@@ -49,8 +49,6 @@ in
       lmstudio
       jetbrains.idea
       voxtype
-      termusic
-      pear-desktop
       seahorse # GUI do gnome-keyring (gerenciar senhas do chaveiro).
       rustdesk
       gnome-font-viewer

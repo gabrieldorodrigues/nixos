@@ -104,16 +104,17 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1791138721,
-        "narHash": "sha256-JGQKn6TAQH9bSzU9DFNWK1MYoWV7rZLOdbkgxVzWKIQ=",
+        "lastModified": 1788193997,
+        "narHash": "sha256-0nwSlyOwoOQLriHTqyVdhgpddQqzZIkJVkBj6k77dyg=",
         "owner": "crmne",
         "repo": "fastpotify",
-        "rev": "7048219716fb8bbf2f1af0934f545801f52cb29b",
+        "rev": "ebdc625389104cf997f3a36a13d46a67f35941c1",
         "type": "github"
       },
       "original": {
         "owner": "crmne",
         "repo": "fastpotify",
+        "rev": "ebdc625389104cf997f3a36a13d46a67f35941c1",
         "type": "github"
       }
     },
@@ -164,11 +165,11 @@
       },
       "locked": {
         "dir": "packages/nix",
-        "lastModified": 1791044936,
-        "narHash": "sha256-+mNY2lHscvVa4KntAxuRMMFYMYxju06avIKyHooM8EE=",
+        "lastModified": 1792022604,
+        "narHash": "sha256-xyl3KTB+j4W3dAxQVSolNJCQZOasDnCLB3Dr14adBmU=",
         "owner": "SteamClientHomebrew",
         "repo": "Millennium",
-        "rev": "63c3928f0306edd83122c0f5b085a9b1a3d60f55",
+        "rev": "22af2f453777a925fb398a3dab60a407e66aa83f",
         "type": "github"
       },
       "original": {
@@ -181,17 +182,37 @@
     "millennium-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1790436335,
-        "narHash": "sha256-ghYUa4gPLV/VOflM2zkl/gtdwLWHQpRxG4boQoj4yKM=",
+        "lastModified": 1791947497,
+        "narHash": "sha256-sNpoyJ+IjrTiDGfX2QiKVg4jkrJR7n9PdBeOYJSS4n8=",
         "owner": "SteamClientHomebrew",
         "repo": "Millennium",
-        "rev": "765aa8802f8a4d942ad8ac8323a9e0f233a50fa8",
+        "rev": "401d532543a0fbff469653ccba802bdd7e45f861",
         "type": "github"
       },
       "original": {
         "owner": "SteamClientHomebrew",
         "repo": "Millennium",
-        "rev": "765aa8802f8a4d942ad8ac8323a9e0f233a50fa8",
+        "rev": "401d532543a0fbff469653ccba802bdd7e45f861",
+        "type": "github"
+      }
+    },
+    "nix-craftapps": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791540118,
+        "narHash": "sha256-GHAjutOIsjA7kzusttluaftJH0yBT53LMiFpm6Nvd8o=",
+        "owner": "olafkfreund",
+        "repo": "nix-craftapps",
+        "rev": "f93a6e61de21143bf54785adaefa5b4d9d1b3e1f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "olafkfreund",
+        "repo": "nix-craftapps",
         "type": "github"
       }
     },
@@ -251,6 +272,7 @@
         "fastpotify": "fastpotify",
         "home-manager": "home-manager",
         "millennium": "millennium",
+        "nix-craftapps": "nix-craftapps",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "spicetify-nix": "spicetify-nix",
